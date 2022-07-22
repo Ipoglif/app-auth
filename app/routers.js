@@ -8,8 +8,10 @@ const db = require('knex')(mysql)
 
 router.post('/reg', reg)
 router.post('/login', login)
+router.get('/showAds', middleware, showAds)
 router.post('/addAds', middleware, addAds)
-router.post('/editAds', editAds)
+router.post('/editAds', middleware, editAds)
+router.post('/deleteAds', middleware, deleteAds)
 
 module.exports = router
 
@@ -22,15 +24,13 @@ async function reg(req, res) {
         if (result[0] !== undefined && !result[0].length) {
             return res.status(400).json('Must be other Username')
         } else {
-            db('accounts').insert({
+            await db('accounts').insert({
                 username: username,
                 psw: password,
             }).then(() => {
                 return res.json(`User ${username} created`)
             })
-
         }
-
     } catch (e) {
         console.error(e)
     }
@@ -50,13 +50,23 @@ async function login(req, res) {
     }
 }
 
-function addAds(req, res) {
+async function showAds(req, res) {
     try {
-        const { username, password} = req.body
+        const t = await db('adds').select('*')
+        return res.json({'all Adds:': t})
+    } catch (e) {
+        console.error(e)
+    }
+}
 
-        db('adds').insert({
+async function addAds(req, res) {
+    try {
+        const { username, password, description, img} = req.body
+
+        await db('adds').insert({
             username: username,
-            img: password
+            description: description,
+            img: img
         }).then(() => {
             return res.json(`Adds aded`)
         })
@@ -64,9 +74,29 @@ function addAds(req, res) {
         console.error(e)
     }
 }
-function editAds(req, res) {
+async function editAds(req, res) {
     try {
+        const { username, id, description, img} = req.body
+        const result = await db('adds').where({id: id})
+        if (username !== result[0].username) return res.json({message: 'Is not you Note'})
 
+        await db('adds').where({id: id}).update({
+            description: description,
+            img: img
+        }).then((t) => {return res.json(t + ' updated')})
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+async function deleteAds(req, res) {
+    try {
+        const { username, id } = req.body
+        const result = await db('adds').where({id: id})
+        if (username !== result[0].username) return res.json({message: 'Is not you Note'})
+        await db('adds').where({id: id}).update({
+            deleted: 1
+        }).then((t) => {return res.json(t + ' deleted')})
     } catch (e) {
         console.error(e)
     }

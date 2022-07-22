@@ -8,10 +8,10 @@ const app = express()
 const db = require('knex')(mysql)
 
 app.use(express.json())
-app.use('/auth', routers)
+app.use('/api', routers)
 
 app.get('/', async (req,res) => {
-    const t = await db('accounts').where({username: 'admin'})
+    await db('accounts').where({username: 'admin'})
         .then((c) => {
             return res.json({c})
         })
