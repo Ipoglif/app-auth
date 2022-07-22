@@ -11,16 +11,21 @@ router.get('/showAds', middleware, showAds)
 router.get('/showUsers', showUsers)
 router.post('/reg', reg)
 router.post('/login', login)
-router.options('/login', login)
 router.post('/addAds', middleware, addAds)
 router.post('/editAds', middleware, editAds)
 router.post('/deleteAds', middleware, deleteAds)
+
+router.options('/login', login)
+router.options('/reg', reg)
+router.options('/addAds', middleware, addAds)
+router.options('/editAds', middleware, editAds)
+router.options('/deleteAds', middleware, deleteAds)
 
 module.exports = router
 
 async function reg(req, res) {
     try {
-        const { username, password } = req.body
+        const { username, password } = req.body || req.params
 
         const result = await db('accounts').where('username', username)
 
@@ -40,10 +45,9 @@ async function reg(req, res) {
 
 async function login(req, res) {
     try {
-        const { username, password } = req.body
+        const { username, password } = req.body || req.params
 
-        console.log(req.body)
-        console.log(typeof req.body)
+        console.log(req)
 
         const result = await db('accounts').where('username', username)
         if (!result[0]) return res.status(400).json('User not found. Please Registr')
@@ -70,7 +74,7 @@ async function showAds(req, res) {
 
 async function addAds(req, res) {
     try {
-        const { username, description, img } = req.body
+        const { username, description, img } = req.body || req.params
 
         await db('adds').insert({
             creator: username,
@@ -86,7 +90,7 @@ async function addAds(req, res) {
 
 async function editAds(req, res) {
     try {
-        const { username, id, description, img } = req.body
+        const { username, id, description, img } = req.body || req.params
 
         const result = await db('adds').where({id: id})
         if (username !== result[0].username) return res.json({message: 'Is not you Note'})
@@ -102,7 +106,7 @@ async function editAds(req, res) {
 
 async function deleteAds(req, res) {
     try {
-        const { username, id } = req.body
+        const { username, id } = req.body || req.params
 
         const result = await db('adds').where({id: id})
         if (username !== result[0].username) return res.json({message: 'Is not you Note'})
