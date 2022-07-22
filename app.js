@@ -11,12 +11,9 @@ app.use(express.json())
 app.use('/auth', routers)
 
 app.get('/', async (req,res) => {
-    db('accounts').insert({
-        username: 'admin',
-        psw: 'admin'
-    }).then(() => {
-        return res.json('Admin, added to db')
-    })
+    const t = await db('accounts').where({id: 1})
+    console.log(t)
+
 })
 
 const start = () => {
