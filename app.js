@@ -9,6 +9,14 @@ const db = require('knex')(mysql)
 
 app.use(express.json())
 app.use('/api', routers)
+app.use(function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE')
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
+    res.setHeader('Access-Control-Allow-Credentials', true)
+    next()
+})
 
 app.get('/', async (req,res) => {
     await db('accounts').where({username: 'admin'})
