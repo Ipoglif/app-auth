@@ -1,6 +1,7 @@
 const Router = require('express')
 const router = new Router()
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 
 const { secret, mysql } = require('../config/config')
 
@@ -26,10 +27,8 @@ async function reg(req, res) {
         } else {
             await db('accounts').insert({
                 username: username,
-                psw: password,
-            }).then(() => {
-                return res.json(`User ${username} created`)
-            })
+                psw: bcrypt.hashSync(password, 7),
+            }).then(() => {return res.json(`User ${username} created`)})
         }
     } catch (e) {
         console.error(e)
@@ -40,8 +39,13 @@ async function reg(req, res) {
 async function login(req, res) {
     try {
         const { username, password } = req.body
+
         const result = await db('accounts').where('username', username)
         if (!result[0]) return res.status(400).json('User not found. Please Registr')
+
+        const validPassword = bcrypt.compareSync(password, result.psw)
+        if (!validPassword) return res.status(400).json('Password Error')
+
         const token = generateAccessToken(result[0].id)
         return res.json({token})
 
@@ -52,8 +56,8 @@ async function login(req, res) {
 
 async function showAds(req, res) {
     try {
-        const t = await db('adds').select('*')
-        return res.json({'all Adds:': t})
+        const result = await db('adds').select('*')
+        return res.json({'all Adds:': result})
     } catch (e) {
         console.error(e)
     }
@@ -61,10 +65,10 @@ async function showAds(req, res) {
 
 async function addAds(req, res) {
     try {
-        const { username, password, description, img } = req.body
+        const { username, description, img } = req.body
 
         await db('adds').insert({
-            username: username,
+            creator: username,
             description: description,
             img: img
         }).then(() => {
@@ -74,9 +78,11 @@ async function addAds(req, res) {
         console.error(e)
     }
 }
+
 async function editAds(req, res) {
     try {
-        const { username, id, description, img} = req.body
+        const { username, id, description, img } = req.body
+
         const result = await db('adds').where({id: id})
         if (username !== result[0].username) return res.json({message: 'Is not you Note'})
 
@@ -92,8 +98,10 @@ async function editAds(req, res) {
 async function deleteAds(req, res) {
     try {
         const { username, id } = req.body
+
         const result = await db('adds').where({id: id})
         if (username !== result[0].username) return res.json({message: 'Is not you Note'})
+
         await db('adds').where({id: id}).update({
             deleted: 1
         }).then((t) => {return res.json(t + ' deleted')})
@@ -123,6 +131,5 @@ function middleware (req, res, next) {
 
 const generateAccessToken = (id) => {
     const payload = {id}
-
     return jwt.sign(payload, secret, {expiresIn: '24h'})
 }
