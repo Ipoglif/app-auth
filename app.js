@@ -12,8 +12,9 @@ app.use('/auth', routers)
 
 app.get('/', async (req,res) => {
     const t = await db('accounts').where({username: 'admin'})
-    res.json(t)
-
+        .then((c) => {
+            return res.json({c})
+        })
 })
 
 const start = () => {
