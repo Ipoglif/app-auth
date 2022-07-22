@@ -11,8 +11,8 @@ app.use(express.json())
 app.use('/auth', routers)
 
 app.get('/', async (req,res) => {
-    const t = await db('accounts').where({id: 1})
-    console.log(t)
+    const t = await db('accounts').where({username: 'admin'})
+    res.json(t)
 
 })
 
