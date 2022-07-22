@@ -42,6 +42,9 @@ async function login(req, res) {
     try {
         const { username, password } = req.body
 
+        console.log(req.body)
+        console.log(typeof req.body)
+
         const result = await db('accounts').where('username', username)
         if (!result[0]) return res.status(400).json('User not found. Please Registr')
 
