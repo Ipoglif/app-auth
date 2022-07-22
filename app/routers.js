@@ -15,12 +15,6 @@ router.post('/addAds', middleware, addAds)
 router.post('/editAds', middleware, editAds)
 router.post('/deleteAds', middleware, deleteAds)
 
-router.options('/login', login)
-router.options('/reg', reg)
-router.options('/addAds', middleware, addAds)
-router.options('/editAds', middleware, editAds)
-router.options('/deleteAds', middleware, deleteAds)
-
 module.exports = router
 
 async function reg(req, res) {
@@ -46,8 +40,6 @@ async function reg(req, res) {
 async function login(req, res) {
     try {
         const { username, password } = req.body || req.params
-
-        console.log(req)
 
         const result = await db('accounts').where('username', username)
         if (!result[0]) return res.status(400).json('User not found. Please Registr')
@@ -122,7 +114,7 @@ async function deleteAds(req, res) {
 async function showUsers(req, res) {
     try {
         const result = await db('accounts').select('*')
-        return res.json({'all users:': result})
+        return res.json({result})
     } catch (e) {
         console.error(e)
     }
