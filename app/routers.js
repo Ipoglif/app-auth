@@ -61,7 +61,7 @@ async function showAds(req, res) {
 
 async function addAds(req, res) {
     try {
-        const { username, password, description, img} = req.body
+        const { username, password, description, img } = req.body
 
         await db('adds').insert({
             username: username,
