@@ -7,9 +7,10 @@ const { secret, mysql } = require('../config/config')
 
 const db = require('knex')(mysql)
 
+router.get('/showAds', middleware, showAds)
+router.get('/showUsers', showUsers)
 router.post('/reg', reg)
 router.post('/login', login)
-router.get('/showAds', middleware, showAds)
 router.post('/addAds', middleware, addAds)
 router.post('/editAds', middleware, editAds)
 router.post('/deleteAds', middleware, deleteAds)
@@ -105,6 +106,15 @@ async function deleteAds(req, res) {
         await db('adds').where({id: id}).update({
             deleted: 1
         }).then((t) => {return res.json(t + ' deleted')})
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+async function showUsers(req, res) {
+    try {
+        const result = await db('accounts').select('*')
+        return res.json({'all users:': result})
     } catch (e) {
         console.error(e)
     }
