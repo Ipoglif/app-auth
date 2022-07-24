@@ -1,4 +1,5 @@
 module.exports = {
+    port: process.env.PORT || 3000,
     mysql: {
         client: 'mysql2',
         connection: {
@@ -8,6 +9,25 @@ module.exports = {
             password: 'zE5bU4gU5u',
             database: 'db-blog'
         }
+    },
+    ftp: {
+        host: '185.219.43.43',
+        port: 21,
+        user: 'testblog',
+        password: 'hX9nA5lI2c'
+    },
+    swagger: {
+        definition: {
+            openapi: '3.0.0',
+            info: {
+                title: 'Blog API',
+                version: '1.0.0'
+            },
+            servers: [{
+                url: `http://localhost:${this.port}`
+            }]
+        },
+        apis: ['app/swagger.js']
     },
     secret: 'SERVER_SECRET_KEY'
 }

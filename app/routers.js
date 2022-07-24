@@ -2,16 +2,25 @@ const Router = require('express')
 const router = new Router()
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const Client = require('ftp')
+const multer = require('multer')
+const {v4} = require('uuid')
+const getFileType = require('file-type')
 
-const { secret, mysql } = require('../config/config')
+const { secret, mysql, ftp } = require('../config/config')
 
 const db = require('knex')(mysql)
 
-router.get('/showAds', middleware, showAds)
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
+const file = new Client()
+file.connect(ftp)
+
+router.get('/showAds', showAds)
 router.get('/showUsers', showUsers)
 router.post('/reg', reg)
 router.post('/login', login)
-router.post('/addAds', middleware, addAds)
+router.post('/addAds',  upload.single('file'), middleware, addAds)
 router.post('/editAds', middleware, editAds)
 router.post('/deleteAds', middleware, deleteAds)
 
@@ -36,7 +45,6 @@ async function reg(req, res) {
     }
 }
 
-
 async function login(req, res) {
     try {
         const { username, password } = req.body || req.params
@@ -44,21 +52,33 @@ async function login(req, res) {
         const result = await db('accounts').where('username', username)
         if (!result[0]) return res.status(400).json('User not found. Please Registr')
 
-        // const validPassword = bcrypt.compareSync(password, result.psw)
-        // if (!validPassword) return res.status(400).json('Password Error')
+        const validPassword = bcrypt.compareSync(password, result[0].psw)
+        if (!validPassword) return res.status(400).json('Password Error')
 
         const token = generateAccessToken(result[0].id)
         return res.json({token})
 
     } catch (e) {
         console.error(e)
+
     }
 }
 
 async function showAds(req, res) {
     try {
-        const result = await db('adds').select('*')
-        return res.json({'all Adds:': result})
+        // let data = null
+        const result = await db('adds').select('*').where({deleted: null})
+        result.map((t) => {
+            if (t.file)
+                file.get(t.file, (err, stream) => {
+                    // data = stream.pipe(fs.createWriteStream('uploads/'+t.file))
+                })
+            // res.setHeader('Content-Tyoe', 'image/png')
+            // res.send(__dirname+t.file+'.png')
+        })
+        // data = fromFile(__dirname_+t.file+'.png')
+        // console.log(data)
+        return res.json({all:result[0]})
     } catch (e) {
         console.error(e)
     }
@@ -66,17 +86,26 @@ async function showAds(req, res) {
 
 async function addAds(req, res) {
     try {
-        const { username, description, img } = req.body || req.params
+        const { username, description } = req.body || req.params
+
+        let hash
+        if (req.file) {
+            hash = v4()
+            await addFIle(req.file, res, hash)
+        }
+
+        console.log(hash)
 
         await db('adds').insert({
             creator: username,
             description: description,
-            img: img
-        }).then(() => {
-            return res.json(`Adds aded`)
+            file: hash || null
+        }).then((t) => {
+            return res.json({message: `Add aded ${hash || 'No file'}`})
         })
     } catch (e) {
         console.error(e)
+        return res.json(e)
     }
 }
 
@@ -142,4 +171,20 @@ function middleware (req, res, next) {
 const generateAccessToken = (id) => {
     const payload = {id}
     return jwt.sign(payload, secret, {expiresIn: '24h'})
+}
+
+async function addFIle(infile, res, hash) {
+    const { buffer, originalname } = infile
+
+    await getFileType.fromBuffer(buffer).then((type) => {
+        file.put(buffer, hash, (err) => {
+            if (err) throw err
+            file.end()
+        })
+        return db('files').insert({
+            hash: hash,
+            name: originalname,
+            type: type.ext
+        })
+    })
 }
