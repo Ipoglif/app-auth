@@ -77,14 +77,14 @@
  *          properties:
  *              username:
  *                  type: string
- *                  description: the username
+ *                  description: enter username
  *              description:
  *                  type: string
- *                  description: the description
+ *                  description: your big text
  *              file:
  *                  type: string
  *                  format: binary
- *                  description: thie file description
+ *                  description: upload a file
  *          required:
  *              - username
  *              - description
