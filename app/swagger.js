@@ -22,6 +22,17 @@
 
 /**
  * @swagger
+ * /api/showUsers:
+ *  get:
+ *      summary: show all ads
+ *      tags: [Authorization]
+ *      responses:
+ *          200:
+ *              description: show all ads from db if not have deleted:1
+ */
+
+/**
+ * @swagger
  * /api/reg:
  *  post:
  *      summary: create new user
@@ -93,6 +104,7 @@
  *          200:
  *              description: show all ads from db if not have deleted:1
  */
+
 /**
  * @swagger
  * /api/addAds:

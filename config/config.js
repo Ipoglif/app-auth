@@ -1,5 +1,7 @@
+const port =  process.env.PORT || 3000
+
 module.exports = {
-    port: process.env.PORT || 3000,
+    port,
     mysql: {
         client: 'mysql2',
         connection: {
@@ -24,7 +26,7 @@ module.exports = {
                 version: '1.0.0'
             },
             servers: [{
-                url: `http://localhost:${this.port}`
+                url: `http://localhost:${port}`
             }]
         },
         apis: ['app/swagger.js']
