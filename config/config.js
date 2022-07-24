@@ -26,7 +26,7 @@ module.exports = {
                 version: '1.0.0'
             },
             servers: [{
-                url: `https://docker-blog-tzt.herokuapp.com`
+                url: `https://localhost:${port}`
             }]
         },
         apis: ['app/swagger.js']

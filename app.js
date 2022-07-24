@@ -10,8 +10,6 @@ const app = express()
 
 const db = require('knex')(mysql)
 
-console.log(process.env)
-
 app.use(express.json())
 app.use('/api', routers)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swagger)))

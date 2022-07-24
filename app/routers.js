@@ -16,7 +16,7 @@ const upload = multer({ storage: storage })
 const file = new Client()
 file.connect(ftp)
 
-router.get('/showAds', showAds)
+router.get('/showAds', middleware, showAds)
 router.get('/showUsers', showUsers)
 router.post('/reg', reg)
 router.post('/login', login)

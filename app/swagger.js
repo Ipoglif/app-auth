@@ -92,12 +92,21 @@
  *              username: admin
  *              description: your big description
  *              file: your big file
+ *  securitySchemes:
+ *      bearerAuth:
+ *          type: http
+ *          scheme: bearer
+ *          bearerFormat: JWT
+ *  security:
+ *      - bearerAuth: []
  */
 
 /**
  * @swagger
  * /api/showAds:
  *  get:
+ *      security:
+ *          - bearerAuth: []
  *      summary: show all ads
  *      tags: [Ads]
  *      responses:
@@ -109,7 +118,9 @@
  * @swagger
  * /api/addAds:
  *  post:
- *      summary: show all ads
+ *      security:
+ *           - bearerAuth: []
+ *      summary: add new ads
  *      tags: [Ads]
  *      requestBody:
  *          required: true
@@ -121,4 +132,44 @@
  *      responses:
  *          200:
  *              description: show all ads from db if not have deleted:1
+ */
+
+/**
+ * @swagger
+ * /api/editAds:
+ *  post:
+ *      security:
+ *           - bearerAuth: []
+ *      summary: edit ads
+ *      tags: [Ads]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      $ref: '#/components/schemas/Ads'
+ *      responses:
+ *          200:
+ *              description: change ads in db
+ */
+
+/**
+ * @swagger
+ * /api/deleteAds:
+ *  post:
+ *      security:
+ *           - bearerAuth: []
+ *      summary: deleted ads
+ *      tags: [Ads]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      $ref: '#/components/schemas/Ads'
+ *      responses:
+ *          200:
+ *              description: change in db "deleted" to 1
  */
