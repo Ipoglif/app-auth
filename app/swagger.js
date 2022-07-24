@@ -67,7 +67,7 @@
  *              description: take your token
  */
 
-// ads
+// Ads
 /**
  * @swagger
  * components:

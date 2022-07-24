@@ -67,18 +67,18 @@ async function login(req, res) {
 async function showAds(req, res) {
     try {
         // let data = null
-        const result = await db('adds').select('*').where({deleted: null})
-        result.map((t) => {
-            if (t.file)
-                file.get(t.file, (err, stream) => {
-                    // data = stream.pipe(fs.createWriteStream('uploads/'+t.file))
-                })
-            // res.setHeader('Content-Tyoe', 'image/png')
-            // res.send(__dirname+t.file+'.png')
-        })
+        const result = await db('adds').select('*')
+        // result.map((t) => {
+        //     if (t.file)
+        //         file.get(t.file, (err, stream) => {
+        //             // data = stream.pipe(fs.createWriteStream('uploads/'+t.file))
+        //         })
+        //     // res.setHeader('Content-Tyoe', 'image/png')
+        //     // res.send(__dirname+t.file+'.png')
+        // })
         // data = fromFile(__dirname_+t.file+'.png')
         // console.log(data)
-        return res.json({all:result[0]})
+        return res.json({all:result})
     } catch (e) {
         console.error(e)
     }
