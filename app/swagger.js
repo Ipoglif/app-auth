@@ -28,7 +28,7 @@
  *      tags: [Authorization]
  *      responses:
  *          200:
- *              description: show all ads from db if not have deleted:1
+ *              description: show all users in db
  */
 
 /**
@@ -64,7 +64,7 @@
  *                      $ref: '#/components/schemas/Authorization'
  *      responses:
  *          200:
- *              description: take your token
+ *              description: logining and res token
  */
 
 // Ads
@@ -88,7 +88,6 @@
  *          required:
  *              - username
  *              - description
- *              - file
  *          example:
  *              username: admin
  *              description: your big description
@@ -113,6 +112,10 @@
  *      responses:
  *          200:
  *              description: show all ads from db if not have deleted:1
+ *              content:
+ *                  multipart/form-data:
+ *                      schema:
+ *                          type: file
  */
 
 /**
@@ -132,16 +135,16 @@
  *                      $ref: '#/components/schemas/Ads'
  *      responses:
  *          200:
- *              description: show all ads from db if not have deleted:1
+ *              description: insert to db your adds with file or empty filed
  */
 
 /**
  * @swagger
- * /api/editAds:
+ * /api/updateAds:
  *  post:
  *      security:
- *           - bearerAuth: []
- *      summary: edit ads
+ *          - bearerAuth: []
+ *      summary: add new ads
  *      tags: [Ads]
  *      requestBody:
  *          required: true
@@ -149,10 +152,22 @@
  *              multipart/form-data:
  *                  schema:
  *                      type: object
- *                      $ref: '#/components/schemas/Ads'
+ *                      properties:
+ *                          id:
+ *                              type: integer
+ *                          username:
+ *                              type: string
+ *                          description:
+ *                              type: string
+ *                          file:
+ *                              type: file
+ *                              format: binary
+ *                      required:
+ *                          - id
+ *                          - username
  *      responses:
  *          200:
- *              description: change ads in db
+ *              description: edit ads of id and username
  */
 
 /**
@@ -160,17 +175,32 @@
  * /api/deleteAds:
  *  post:
  *      security:
- *           - bearerAuth: []
- *      summary: deleted ads
+ *          - bearerAuth: []
+ *      summary: add new ads
  *      tags: [Ads]
  *      requestBody:
  *          required: true
  *          content:
  *              application/json:
  *                  schema:
+ *                      properties:
+ *                          id:
+ *                              type: integer
+ *                          username:
+ *                              type: string
+ *              multipart/form-data:
+ *                  schema:
  *                      type: object
- *                      $ref: '#/components/schemas/Ads'
+ *                      properties:
+ *                          id:
+ *                              type: integer
+ *                          file:
+ *                              type: file
+ *                              format: binary
+ *                      required:
+ *                          - id
+ *                          - username
  *      responses:
  *          200:
- *              description: change in db "deleted" to 1
+ *              description: delete ads by change from db field deleted
  */

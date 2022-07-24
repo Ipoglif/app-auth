@@ -32,5 +32,5 @@ module.exports = {
         apis: ['app/swagger.js']
     },
     secret: 'SERVER_SECRET_KEY',
-    port
+    port,host
 }
