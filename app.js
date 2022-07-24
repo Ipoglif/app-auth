@@ -14,6 +14,8 @@ app.use(express.json())
 app.use('/api', routers)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swagger)))
 
+console.log(process.env)
+
 app.get('/', async (req,res) => {
     await db('accounts').where({username: 'admin'})
         .then((users) => {
