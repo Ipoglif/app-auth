@@ -83,6 +83,7 @@
  *                  description: the description
  *              file:
  *                  type: string
+ *                  format: binary
  *                  description: thie file description
  *          required:
  *              - username
@@ -125,7 +126,7 @@
  *      requestBody:
  *          required: true
  *          content:
- *              application/json:
+ *              multipart/form-data:
  *                  schema:
  *                      type: object
  *                      $ref: '#/components/schemas/Ads'
@@ -145,7 +146,7 @@
  *      requestBody:
  *          required: true
  *          content:
- *              application/json:
+ *              multipart/form-data:
  *                  schema:
  *                      type: object
  *                      $ref: '#/components/schemas/Ads'
