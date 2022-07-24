@@ -26,7 +26,7 @@ module.exports = {
                 version: '1.0.0'
             },
             servers: [{
-                url: `http://localhost:${port}`
+                url: `https://localhost:${port}`
             }]
         },
         apis: ['app/swagger.js']
