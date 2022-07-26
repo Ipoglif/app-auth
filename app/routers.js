@@ -84,8 +84,9 @@ async function showAds(req, res) {
             if (key.file) {
                 await db('files').where({'hash': key.file}).then(t => {
                     file.get(key.file, (err, stream) => {
-                        stream.pipe(fs.createWriteStream(`uploads/${key.file}.${t[0].type}`))
+                        // stream.pipe(fs.createWriteStream(`uploads/${key.file}.${t[0].type}`))
                     })
+
                     adsWithFile[num]['fileUrl'] = `${host}/uploads/${key.file}.${t[0].type}`
                 })
             }
