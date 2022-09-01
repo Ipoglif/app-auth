@@ -67,6 +67,8 @@ async function login(req, res) {
         scheme.message = 'Authorized'
         scheme.__token = token
 
+        res.setHeader('Authorization', [token])
+
         return res.json(scheme)
 
     } catch (e) {
