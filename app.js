@@ -9,7 +9,6 @@ const app = express()
 
 const db = require('knex')(mysql)
 
-
 app.use(express.json())
 app.use(express.static(__dirname))
 app.use('/api', routers)
