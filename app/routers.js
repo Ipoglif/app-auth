@@ -17,10 +17,14 @@ const upload = multer({ storage: storage })
 const file = new Client()
 // file.connect(ftp)
 
-router.get('/showAds', showAds)
+//authorization
 router.get('/showUsers', showUsers)
 router.post('/reg', reg)
 router.post('/login', login)
+router.get('/me', middleware, me)
+
+//ads
+router.get('/showAds', showAds)
 router.post('/addAds',  upload.single('file'), middleware, addAds)
 router.post('/updateAds', upload.single('file'), middleware, updateAds)
 router.post('/deleteAds', middleware, deleteAds)
@@ -50,7 +54,7 @@ async function login(req, res) {
     try {
         const { username, password } = req.body || req.params
 
-        let form = {}
+        let scheme = {}
 
         const result = await db('accounts').where('username', username)
         if (!result[0]) return res.status(400).json(`${username}: User not found. Please Registr`)
@@ -60,14 +64,37 @@ async function login(req, res) {
 
         const token = generateAccessToken(result[0].id)
 
-        form.message = 'Authorized'
-        form.__token = token
+        scheme.message = 'Authorized'
+        scheme.__token = token
 
-        return res.json(form)
-        
+        return res.json(scheme)
+
     } catch (e) {
         console.error(e)
 
+    }
+}
+
+async function me(req, res) {
+    try {
+        let scheme = {}
+
+        // const result = await db('accounts').select('*')
+
+        scheme.creator_id = 'string_creator_id'
+        scheme.dowloads = 'number_downloads'
+        scheme.email = 'string_email'
+        scheme.id = 'number_id'
+        scheme.in_white_list = 'bool_list'
+        scheme.is_validator = 'bool_validator'
+        scheme.karma = 'string_karma'
+        scheme.role = 'string_role'
+        scheme.user_icon = 'URL_icon'
+        scheme.user_name = 'string_name'
+
+        return res.json(scheme)
+    } catch (e) {
+        console.error(e)
     }
 }
 

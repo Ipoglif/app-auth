@@ -67,6 +67,24 @@
  *              description: logining and res token
  */
 
+/**
+ * @swagger
+ * /api/me:
+ *  get:
+ *      summary: user data
+ *      tags: [Authorization]
+ *      responses:
+ *          200:
+ *              description: user data
+ *      securitySchemes:
+ *          bearerAuth:
+ *              type: http
+ *              scheme: bearer
+ *              bearerFormat: JWT
+ *      security:
+ *              - bearerAuth: []
+ */
+
 // Ads
 /**
  * @swagger
