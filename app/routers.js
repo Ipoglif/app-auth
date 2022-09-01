@@ -9,6 +9,7 @@ const getFileType = require('file-type')
 const fs = require('fs')
 
 const { secret, mysql, ftp, host } = require('../config/config')
+const {request} = require("express");
 
 const db = require('knex')(mysql)
 
@@ -67,7 +68,9 @@ async function login(req, res) {
         scheme.message = 'Authorized'
         scheme.__token = token
 
-        res.set('Authorization' , [token])
+        res.cookie('Authorization', token)
+        // res.headers.authorization = token
+        // res.set('Authorization' , [token])
 
         return res.json(scheme)
 
