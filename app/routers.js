@@ -10,7 +10,7 @@ const fs = require('fs')
 
 const { secret, mysql, ftp, host } = require('../config/config')
 
-// const db = require('knex')(mysql)
+const db = require('knex')(mysql)
 
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
