@@ -50,6 +50,8 @@ async function login(req, res) {
     try {
         const { username, password } = req.body || req.params
 
+        let form = {}
+
         const result = await db('accounts').where('username', username)
         if (!result[0]) return res.status(400).json(`${username}: User not found. Please Registr`)
 
@@ -57,8 +59,12 @@ async function login(req, res) {
         if (!validPassword) return res.status(400).json('Password Error')
 
         const token = generateAccessToken(result[0].id)
-        return res.json({token})
 
+        form.message = 'Authorized'
+        form.__token = token
+
+        return res.json(form)
+        
     } catch (e) {
         console.error(e)
 
