@@ -207,7 +207,7 @@ function middleware (req, res, next) {
 
     try {
         const token = req.headers.authorization.split(' ')[1]
-        console.log('Headers -> ', req.headers)
+        console.log('Headers -> ', req.headers.authorization)
         if (!token) return res.status(400).json('Error User. Please login')
 
         const decodeData = jwt.verify(token, secret)
