@@ -9,7 +9,6 @@ const getFileType = require('file-type')
 const fs = require('fs')
 
 const { secret, mysql, ftp, host } = require('../config/config')
-const {request} = require("express");
 
 const db = require('knex')(mysql)
 
@@ -208,7 +207,7 @@ function middleware (req, res, next) {
 
     try {
         const token = req.headers.authorization.split(' ')[1]
-        console.log(token)
+        console.log('Headers -> ', req.headers)
         if (!token) return res.status(400).json('Error User. Please login')
 
         const decodeData = jwt.verify(token, secret)
