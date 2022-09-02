@@ -68,7 +68,9 @@ async function login(req, res) {
         scheme.message = 'Authorized'
         scheme.__token = token
 
-        res.cookie('Authorization', token)
+        console.log(token)
+
+        res.cookie('Authorization', token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
         // res.headers.authorization = token
         // res.set('Authorization' , [token])
 
@@ -206,6 +208,7 @@ function middleware (req, res, next) {
 
     try {
         const token = req.headers.authorization.split(' ')[1]
+        console.log(token)
         if (!token) return res.status(400).json('Error User. Please login')
 
         const decodeData = jwt.verify(token, secret)
