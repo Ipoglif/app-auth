@@ -86,10 +86,9 @@ async function me(req, res) {
         let scheme = {}
 
         const result = await db('accounts').where({username: 'admin'})
-        console.log(result)
 
         scheme.email = 'test@mail.ru'
-        scheme.id = result.id
+        scheme.id = result[0].id
         scheme.role = 'admin'
         scheme.user_icon = null
         scheme.user_name = 'admin'
