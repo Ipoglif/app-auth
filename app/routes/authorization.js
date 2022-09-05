@@ -24,10 +24,9 @@ async function generateTokens (id) {
     const tokenData = await db('accounts').where('id', id)
 
     if (tokenData[0]) {
-        db('accounts').where('id', id).update('refreshToken', refreshToken)
+        tokenData.refreshToken = refreshToken
+        db('accounts').where('id', id).update('refreshToken', refreshToken).then()
     }
-
-    db('accounts').where('id', id).update('refreshToken', refreshToken)
 
     return {
         accesToken,
