@@ -22,7 +22,7 @@ async function generateTokens (id) {
     const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '10d'})
 
     const tokenData = await db('accounts').where('id', id)
-    
+
     if (tokenData[0]) {
         db('accounts').where('id', id).update('refreshToken', refreshToken)
     }
@@ -66,13 +66,11 @@ async function login(req, res) {
         const validPassword = bcrypt.compareSync(password, result[0].psw)
         if (!validPassword) return res.status(400).json('Password Error')
 
-        const token = generateTokens(result[0].id)
+        const token = await generateTokens(result[0].id)
 
-        scheme.message = 'Authorized'
+        res.cookie('Authorization', token.accesToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
 
-        res.cookie('Authorization', token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-
-        return res.json(scheme)
+        return res.json(token)
 
     } catch (e) {
         console.error(e)
