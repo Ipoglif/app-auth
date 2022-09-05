@@ -1,6 +1,7 @@
 const express = require('express')
-const routers = require('./app/routes/authorization')
 const cors = require('cors')
+
+const routers = require('./app/routes/authorization')
 const cookieParser = require('cookie-parser')
 
 const { port, mysql, swagger } = require('./config/config')
