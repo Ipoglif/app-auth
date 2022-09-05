@@ -85,7 +85,8 @@ async function me(req, res) {
     try {
         let scheme = {}
 
-        const result = await db('accounts').where('username', 'admin')
+        const result = await db('accounts').where({username: 'admin'})
+        console.log(result)
 
         scheme.email = 'test@mail.ru'
         scheme.id = result.id
