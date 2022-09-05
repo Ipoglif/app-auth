@@ -13,10 +13,16 @@ const app = express()
 
 const db = require('knex')(mysql)
 
+const corsConfig = {
+    origin: true,
+    credentials: true,
+}
+
 app.use(express.json())
 app.use(express.static(__dirname))
 app.use(cookieParser())
-app.use(cors())
+app.use(cors(corsConfig))
+app.options('*', cors(corsConfig))
 
 app.use('/api', routers)
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swagger)))
