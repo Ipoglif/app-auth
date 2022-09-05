@@ -85,18 +85,13 @@ async function me(req, res) {
     try {
         let scheme = {}
 
-        // const result = await db('accounts').select('*')
+        const result = await db('accounts').where('username', 'admin')
 
-        scheme.creator_id = 'string_creator_id'
-        scheme.dowloads = 'number_downloads'
-        scheme.email = 'string_email'
-        scheme.id = 'number_id'
-        scheme.in_white_list = 'bool_list'
-        scheme.is_validator = 'bool_validator'
-        scheme.karma = 'string_karma'
-        scheme.role = 'string_role'
-        scheme.user_icon = 'URL_icon'
-        scheme.user_name = 'string_name'
+        scheme.email = 'test@mail.ru'
+        scheme.id = result.id
+        scheme.role = 'admin'
+        scheme.user_icon = null
+        scheme.user_name = 'admin'
 
         return res.json(scheme)
     } catch (e) {
