@@ -1,11 +1,11 @@
 const jwt = require("jsonwebtoken");
-const {secret} = require("../../config/config");
+const { secret } = require("../../config/config");
 
 function authMiddleware (req, res, next) {
     if (req.method === 'OPTIONS') next()
 
     try {
-        const token = req.headers.authorization
+        const token = req.headers.authorization || req.headers.authorization.split(' ')[1]
 
         if (!token) return res.status(400).json('Error User. Please login')
 
