@@ -57,8 +57,6 @@ async function login(req, res) {
     try {
         const { username, password } = req.body || req.params
 
-        let scheme = {}
-
         const result = await db('accounts').where('username', username)
         if (!result[0]) return res.status(400).json(`${username}: User not found. Please Registr`)
 
