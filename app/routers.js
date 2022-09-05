@@ -17,12 +17,6 @@ const upload = multer({ storage: storage })
 const file = new Client()
 // file.connect(ftp)
 
-//authorization
-router.get('/showUsers', showUsers)
-router.post('/reg', reg)
-router.post('/login', login)
-router.get('/me', middleware, me)
-
 //ads
 router.get('/showAds', showAds)
 router.post('/addAds',  upload.single('file'), middleware, addAds)
@@ -30,88 +24,6 @@ router.post('/updateAds', upload.single('file'), middleware, updateAds)
 router.post('/deleteAds', middleware, deleteAds)
 
 module.exports = router
-
-async function reg(req, res) {
-    try {
-        const { username, password } = req.body || req.params
-
-        const result = await db('accounts').where('username', username)
-
-        if (result[0] !== undefined && !result[0].length) {
-            return res.status(400).json(`${username}: Name already in use`)
-        } else {
-            await db('accounts').insert({
-                username: username,
-                psw: bcrypt.hashSync(password, 7),
-            }).then(() => {return res.json(`User ${username} created`)})
-        }
-    } catch (e) {
-        console.error(e)
-    }
-}
-
-async function login(req, res) {
-    try {
-        const { username, password } = req.body || req.params
-
-        let scheme = {}
-
-        const result = await db('accounts').where('username', username)
-        if (!result[0]) return res.status(400).json(`${username}: User not found. Please Registr`)
-
-        const validPassword = bcrypt.compareSync(password, result[0].psw)
-        if (!validPassword) return res.status(400).json('Password Error')
-
-        const token = generateAccessToken(result[0].id)
-
-        scheme.message = 'Authorized'
-        scheme.__token = token
-
-        console.log(token)
-
-        res.cookie('Authorization', token, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-        // res.headers.authorization = token
-        // res.set('Authorization' , [token])
-
-        return res.json(scheme)
-
-    } catch (e) {
-        console.error(e)
-
-    }
-}
-
-async function me(req, res) {
-    try {
-        let scheme = {}
-
-        // const result = await db('accounts').select('*')
-
-        scheme.creator_id = 'string_creator_id'
-        scheme.dowloads = 'number_downloads'
-        scheme.email = 'string_email'
-        scheme.id = 'number_id'
-        scheme.in_white_list = 'bool_list'
-        scheme.is_validator = 'bool_validator'
-        scheme.karma = 'string_karma'
-        scheme.role = 'string_role'
-        scheme.user_icon = 'URL_icon'
-        scheme.user_name = 'string_name'
-
-        return res.json(scheme)
-    } catch (e) {
-        console.error(e)
-    }
-}
-
-async function showUsers(req, res) {
-    try {
-        const result = await db('accounts').select('*')
-        return res.json({result})
-    } catch (e) {
-        console.error(e)
-    }
-}
 
 async function showAds(req, res) {
     try {
@@ -221,7 +133,7 @@ function middleware (req, res, next) {
 }
 
 const generateAccessToken = (id) => {
-    const payload = {id}
+    const payload = { id }
     return jwt.sign(payload, secret, {expiresIn: '24h'})
 }
 

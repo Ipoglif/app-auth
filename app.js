@@ -1,5 +1,5 @@
 const express = require('express')
-const routers = require('./app/routers')
+const routers = require('./app/routes/authorization')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 
