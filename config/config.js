@@ -1,6 +1,9 @@
 const port =  process.env.PORT || 3000
 const host = process.env.HOST || `http://localhost:${port}`
 
+process.env.JWT_ACCESS_SECRET='SERVER_SECRET_KEY'
+process.env.JWT_REFRESH_SECRET='SERVER_REFRESH_SECRET_KEY'
+
 module.exports = {
     mysql: {
         client: 'mysql2',
@@ -31,6 +34,5 @@ module.exports = {
         },
         apis: ['app/swagger.js']
     },
-    secret: 'SERVER_SECRET_KEY',
     port,host
 }

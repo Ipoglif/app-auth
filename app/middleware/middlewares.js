@@ -9,7 +9,7 @@ function authMiddleware (req, res, next) {
 
         if (!token) return res.status(400).json('Error User. Please login')
 
-        const decodeData = jwt.verify(token, secret)
+        const decodeData = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
         req.user = decodeData
 
         next()

@@ -16,9 +16,23 @@ router.get('/me', authMiddleware, me)
 
 module.exports = router
 
-const generateAccessToken = (id) => {
+async function generateTokens (id) {
     const payload = { id }
-    return jwt.sign(payload, secret, {expiresIn: '24h'})
+    const accesToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10m'})
+    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '10d'})
+
+    const tokenData = await db('accounts').where('id', id)
+    
+    if (tokenData[0]) {
+        db('accounts').where('id', id).update('refreshToken', refreshToken)
+    }
+
+    db('accounts').where('id', id).update('refreshToken', refreshToken)
+
+    return {
+        accesToken,
+        refreshToken
+    }
 }
 
 async function reg(req, res) {
@@ -52,7 +66,7 @@ async function login(req, res) {
         const validPassword = bcrypt.compareSync(password, result[0].psw)
         if (!validPassword) return res.status(400).json('Password Error')
 
-        const token = generateAccessToken(result[0].id)
+        const token = generateTokens(result[0].id)
 
         scheme.message = 'Authorized'
 
