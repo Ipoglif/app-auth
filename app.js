@@ -1,3 +1,4 @@
+const cookieSession = require('cookie-session')
 const express = require('express')
 const cors = require('cors')
 
@@ -17,6 +18,17 @@ const corsConfig = {
     origin: true,
     credentials: true,
 }
+
+app.use(
+    cookieSession({
+        name: 'session',
+        keys: ['key1'],
+        maxAge: 24 * 60 * 60 * 100,
+        secure: true,
+        httpOnly: true,
+        sameSite: 'none'
+    })
+)
 
 app.use(express.json())
 app.use(express.static(__dirname))
