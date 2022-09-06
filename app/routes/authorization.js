@@ -18,7 +18,7 @@ module.exports = router
 
 async function generateTokens (id) {
     const payload = { id }
-    const accesToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10m'})
+    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10m'})
     const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '10d'})
 
     const tokenData = await db('accounts').where('id', id)
@@ -29,7 +29,7 @@ async function generateTokens (id) {
     }
 
     return {
-        accesToken,
+        accessToken,
         refreshToken
     }
 }
@@ -65,11 +65,13 @@ async function login(req, res) {
 
         const token = await generateTokens(result[0].id)
 
+        const { accessToken, refreshToken } = token
+
         res.set({
-            'Authorization' : token.accesToken
+            'Authorization' : accessToken
         })
 
-        res.cookie('Authorization', token.refreshToken, {
+        res.cookie('Authorization', refreshToken, {
             maxAge: 30 * 24 * 60 * 60 * 1000,
             httpOnly: true,
             sameSite: 'none',
