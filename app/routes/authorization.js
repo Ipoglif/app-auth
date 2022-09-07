@@ -19,15 +19,19 @@ router.post('/logout', logout)
 module.exports = router
 
 async function generateTokens (id) {
-    const payload = { id }
-    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10'})
-    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '20'})
+    const payload = {
+        username: 'admin',
+        psw: 'admin'
+    }
+    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10m'})
+    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '20m'})
 
     const tokenData = await db('accounts').where('id', id)
 
     if (tokenData[0]) {
         tokenData.refreshToken = refreshToken
-        db('accounts').where('id', id).update('refreshToken', refreshToken).then()
+        db('accounts').where('id', id).update('refreshToken', refreshToken)
+            .then(() => console.log('Token updated'))
     }
 
     return {

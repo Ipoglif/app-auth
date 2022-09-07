@@ -5,13 +5,8 @@ const db = require('knex')(mysql)
 
 function authMiddleware (req, res, next) {
     if (req.method === 'OPTIONS') next()
-
-    const { authorization } = req.headers
-
-    console.log(authorization)
-
     try {
-        const { authorization, cookie } = req.headers
+        const { authorization } = req.headers
 
         if (!authorization) return res.status(401).json('User not authorized')
 
