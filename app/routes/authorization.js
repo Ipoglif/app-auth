@@ -99,7 +99,7 @@ async function refresh(req, res) {
 
         const tokenData = await db('accounts').where('refreshToken', cookie)
 
-        const { accessToken, refreshToken } = await generateTokens(0)
+        const { refreshToken } = await generateTokens(0)
 
         if (tokenData[0]) {
             tokenData.refreshToken = refreshToken
@@ -109,18 +109,20 @@ async function refresh(req, res) {
                 .then(() => console.log('Token updated'))
         }
 
-        res.cookie('Authorization', refreshToken, {
+        const tokens = await generateTokens(0)
+
+        res.set({
+            'Authorization' : tokens.accessToken
+        })
+
+        res.cookie('RefreshToken', tokens.refreshToken, {
             maxAge: 30 * 24 * 60 * 60 * 1000,
             httpOnly: true,
             sameSite: 'none',
             secure: true
         })
 
-        return res.json({
-            message: 'Token Refreshed',
-            refreshToken: refreshToken,
-            accessToken: accessToken
-        })
+        return res.json(tokens)
     } catch (e) {
         console.error(e)
     }
