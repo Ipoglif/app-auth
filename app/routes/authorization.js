@@ -13,7 +13,7 @@ router.get('/showUsers', showUsers)
 router.post('/reg', reg)
 router.post('/login', login)
 router.get('/me', authMiddleware, me)
-router.get('/refresh', authMiddleware, refresh)
+router.get('/refresh', refresh)
 router.post('/logout', logout)
 
 module.exports = router
@@ -96,14 +96,34 @@ async function login(req, res) {
 
 async function refresh(req, res) {
     try {
-        const { cookie } = req.headers
+        const cookie = req.headers.cookie.split('=')[1]
+
         if (!cookie) return res.status(401).json({
             message: 'Ошибка токена иди нахуй'
         })
 
+        const tokenData = await db('accounts').where('refreshToken', cookie)
+
         const { accessToken, refreshToken } = await generateTokens(0)
 
-        return res.json(refreshToken)
+        if (tokenData[0]) {
+            tokenData.refreshToken = refreshToken
+            db('accounts').where('refreshToken', cookie).update('refreshToken', refreshToken)
+                .then(() => console.log('Token updated'))
+        }
+
+        res.cookie('Authorization', refreshToken, {
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true
+        })
+
+        return res.json({
+            message: 'Token Refreshed',
+            refreshToken: refreshToken,
+            accessToken: accessToken
+        })
     } catch (e) {
         console.error(e)
     }
