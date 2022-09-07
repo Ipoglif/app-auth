@@ -71,11 +71,15 @@ async function login(req, res) {
 
         const tokens = await generateTokens(result[0].id)
 
+        res.set({
+            'Authorization' : tokens.accessToken
+        })
+
         res.cookie('RefreshToken', tokens.refreshToken, {
             maxAge: 30000,
             httpOnly: true,
-            // sameSite: 'none',
-            // secure: true
+            sameSite: 'none',
+            secure: true
         })
 
         return res.json(tokens)
