@@ -23,8 +23,8 @@ async function generateTokens (id) {
         username: 'admin',
         psw: 'admin'
     }
-    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10m'})
-    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '20m'})
+    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '15000'})
+    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30000'})
 
     const tokenData = await db('accounts').where('id', id)
 
