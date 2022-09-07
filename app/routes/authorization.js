@@ -138,6 +138,7 @@ async function me(req, res) {
 
 async function logout(req, res) {
     try {
+        console.log('RefreshToken')
         const message = {}
         const cookie = req.headers.cookie.split('=')[1]
         await db('accounts')
@@ -145,7 +146,7 @@ async function logout(req, res) {
             .update('refreshToken', null)
             .then(() => message.db = 'Token in db equal NULL')
 
-        res.clearCookie('refreshToken')
+        res.clearCookie('RefreshToken')
         res.clearCookie('Authorization')
         message.refreshToken = 'Token refresh is clean '
 
