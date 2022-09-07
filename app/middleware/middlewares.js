@@ -6,7 +6,9 @@ const db = require('knex')(mysql)
 function authMiddleware (req, res, next) {
     if (req.method === 'OPTIONS') next()
 
-    console.log(req.headers)
+    const { authorization } = req.headers
+
+    console.log(authorization)
 
     try {
         const { authorization, cookie } = req.headers
