@@ -99,17 +99,15 @@ async function refresh(req, res) {
 
         const tokenData = await db('accounts').where('refreshToken', cookie)
 
-        const { refreshToken } = await generateTokens(0)
+        const tokens = await generateTokens(0)
 
         if (tokenData[0]) {
-            tokenData.refreshToken = refreshToken
+            tokenData.refreshToken = tokens.refreshToken
             db('accounts')
                 .where('refreshToken', cookie)
-                .update('refreshToken', refreshToken)
+                .update('refreshToken', tokens.refreshToken)
                 .then(() => console.log('Token updated'))
         }
-
-        const tokens = await generateTokens(0)
 
         res.set({
             'Authorization' : tokens.accessToken
