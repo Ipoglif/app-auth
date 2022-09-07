@@ -146,6 +146,7 @@ async function logout(req, res) {
             .then(() => message.db = 'Token in db equal NULL')
 
         res.clearCookie('refreshToken')
+        res.clearCookie('Authorization')
         message.refreshToken = 'Token refresh is clean '
 
         return res.json(message)
