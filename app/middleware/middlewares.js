@@ -1,17 +1,17 @@
-const jwt = require("jsonwebtoken");
-const { secret } = require("../../config/config");
+const jwt = require("jsonwebtoken")
+const { mysql } = require("../../config/config")
+
+const db = require('knex')(mysql)
 
 function authMiddleware (req, res, next) {
     if (req.method === 'OPTIONS') next()
 
     try {
-        const token = req.headers.authorization || req.headers.authorization.split(' ')[1]
+        const { authorization, cookie } = req.headers
 
-        console.log('headers -> ',req.headers)
+        if (!authorization) return res.status(401).json('User not authorized')
 
-        if (!token) return res.status(400).json('Error User. Please login')
-
-        const decodeData = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
+        const decodeData = jwt.verify(authorization, process.env.JWT_ACCESS_SECRET)
 
         req.user = decodeData
 

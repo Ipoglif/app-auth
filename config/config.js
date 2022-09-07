@@ -21,12 +21,25 @@ module.exports = {
         user: 'testblog',
         password: 'hX9nA5lI2c'
     },
+    cookieOptions: {
+        name: 'session',
+        keys: ['key1'],
+        maxAge: 24 * 60 * 60 * 100,
+        secure: true,
+        httpOnly: true,
+        sameSite: 'none'
+    },
+    corsConfig: {
+        origin: true,
+        credentials: true
+    },
     swagger: {
         definition: {
             openapi: '3.0.0',
             info: {
                 title: 'Blog API',
-                version: '1.0.0'
+                description: 'Blog API Methods',
+                version: '1.0.1'
             },
             servers: [{
                 url: host

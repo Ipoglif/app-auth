@@ -1,4 +1,4 @@
-const { secret, mysql } = require('../../config/config')
+const { mysql } = require('../../config/config')
 const { authMiddleware } = require('../middleware/middlewares')
 
 const Router = require('express')
@@ -13,13 +13,15 @@ router.get('/showUsers', showUsers)
 router.post('/reg', reg)
 router.post('/login', login)
 router.get('/me', authMiddleware, me)
+router.get('/refresh', authMiddleware, refresh)
+router.post('/logout', logout)
 
 module.exports = router
 
 async function generateTokens (id) {
     const payload = { id }
-    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10m'})
-    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '10d'})
+    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '10'})
+    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '20'})
 
     const tokenData = await db('accounts').where('id', id)
 
@@ -63,9 +65,7 @@ async function login(req, res) {
         const validPassword = bcrypt.compareSync(password, result[0].psw)
         if (!validPassword) return res.status(400).json('Password Error')
 
-        const token = await generateTokens(result[0].id)
-
-        const { accessToken, refreshToken } = token
+        const { accessToken, refreshToken } = await generateTokens(result[0].id)
 
         res.set({
             'Authorization' : accessToken
@@ -78,11 +78,30 @@ async function login(req, res) {
             secure: true
         })
 
-        return res.json(token)
+        return res.json({
+            message: {
+                accessToken: accessToken,
+                refreshToken: refreshToken
+            }
+        })
 
     } catch (e) {
         console.error(e)
+    }
+}
 
+async function refresh(req, res) {
+    try {
+        const { cookie } = req.headers
+        if (!cookie) return res.status(401).json({
+            message: 'Ошибка токена иди нахуй'
+        })
+
+        const { accessToken, refreshToken } = await generateTokens(0)
+
+        return res.json(refreshToken)
+    } catch (e) {
+        console.error(e)
     }
 }
 
@@ -99,6 +118,17 @@ async function me(req, res) {
         scheme.user_name = result[0].username
 
         return res.json(scheme)
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+async function logout(req, res) {
+    try {
+
+        return res.json({
+            message : 'logout'
+        })
     } catch (e) {
         console.error(e)
     }

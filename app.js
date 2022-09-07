@@ -1,51 +1,26 @@
 const cookieSession = require('cookie-session')
 const express = require('express')
 const cors = require('cors')
-
-const routers = require('./app/routes/authorization')
 const cookieParser = require('cookie-parser')
 
-const { port, mysql, swagger } = require('./config/config')
+const routers = require('./app/routes/authorization')
+
+const { port, cookieOptions, corsConfig, swagger } = require('./config/config')
 
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 
 const app = express()
 
-const db = require('knex')(mysql)
-
-const corsConfig = {
-    origin: true,
-    credentials: true,
-}
-
-app.use(
-    cookieSession({
-        name: 'session',
-        keys: ['key1'],
-        maxAge: 24 * 60 * 60 * 100,
-        secure: true,
-        httpOnly: true,
-        sameSite: 'none'
-    })
-)
-
 app.use(express.json())
 app.use(express.static(__dirname))
 app.use(cookieParser())
+app.use(cookieSession(cookieOptions))
 app.use(cors(corsConfig))
 app.options('*', cors(corsConfig))
 
 app.use('/api', routers)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swagger)))
-
-
-app.get('/', async (req,res) => {
-    await db('accounts').where({username: 'admin'})
-        .then((users) => {
-            return res.json({users})
-        })
-})
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swagger)))
 
 const start = () => {
     try {

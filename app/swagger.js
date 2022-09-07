@@ -85,6 +85,24 @@
  *              - bearerAuth: []
  */
 
+/**
+ * @swagger
+ * /api/logout:
+ *  get:
+ *      summary: test
+ *      tags: [Authorization]
+ *      responses:
+ *          200:
+ *              description: in creating
+ *      securitySchemes:
+ *          bearerAuth:
+ *              type: http
+ *              scheme: bearer
+ *              bearerFormat: JWT
+ *      security:
+ *              - bearerAuth: []
+ */
+
 // Ads
 /**
  * @swagger
