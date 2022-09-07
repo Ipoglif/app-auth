@@ -75,7 +75,7 @@ async function login(req, res) {
             'Authorization' : accessToken
         })
 
-        res.cookie('Authorization', refreshToken, {
+        res.cookie('RefreshToken', refreshToken, {
             maxAge: 30 * 24 * 60 * 60 * 1000,
             httpOnly: true,
             sameSite: 'none',
@@ -108,7 +108,9 @@ async function refresh(req, res) {
 
         if (tokenData[0]) {
             tokenData.refreshToken = refreshToken
-            db('accounts').where('refreshToken', cookie).update('refreshToken', refreshToken)
+            db('accounts')
+                .where('refreshToken', cookie)
+                .update('refreshToken', refreshToken)
                 .then(() => console.log('Token updated'))
         }
 
@@ -149,10 +151,17 @@ async function me(req, res) {
 
 async function logout(req, res) {
     try {
+        const message = {}
+        const cookie = req.headers.cookie.split('=')[1]
+        await db('accounts')
+            .where('refreshToken', cookie)
+            .update('refreshToken', null)
+            .then(() => message.db = 'Token in db equal NULL')
 
-        return res.json({
-            message : 'logout'
-        })
+        res.clearCookie('refreshToken')
+        message.refreshToken = 'Token refresh is clean'
+
+        return res.json(message)
     } catch (e) {
         console.error(e)
     }
