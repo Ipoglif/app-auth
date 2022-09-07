@@ -69,25 +69,20 @@ async function login(req, res) {
         const validPassword = bcrypt.compareSync(password, result[0].psw)
         if (!validPassword) return res.status(400).json('Password Error')
 
-        const { accessToken, refreshToken } = await generateTokens(result[0].id)
+        const tokens = await generateTokens(result[0].id)
 
         res.set({
-            'Authorization' : accessToken
+            'Authorization' : tokens.accessToken
         })
 
-        res.cookie('RefreshToken', refreshToken, {
+        res.cookie('RefreshToken', tokens.refreshToken, {
             maxAge: 30 * 24 * 60 * 60 * 1000,
             httpOnly: true,
             sameSite: 'none',
             secure: true
         })
 
-        return res.json({
-            message: {
-                accessToken: accessToken,
-                refreshToken: refreshToken
-            }
-        })
+        return res.json(...tokens)
 
     } catch (e) {
         console.error(e)
@@ -159,7 +154,7 @@ async function logout(req, res) {
             .then(() => message.db = 'Token in db equal NULL')
 
         res.clearCookie('refreshToken')
-        message.refreshToken = 'Token refresh is clean'
+        message.refreshToken = 'Token refresh is clean '
 
         return res.json(message)
     } catch (e) {
