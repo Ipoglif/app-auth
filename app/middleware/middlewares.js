@@ -18,7 +18,7 @@ function authMiddleware (req, res, next) {
         next()
     } catch (e) {
         console.error(e)
-        return res.status(400).json('User not found. Please Registr')
+        return res.status(401).json('User not authorized')
     }
 }
 
