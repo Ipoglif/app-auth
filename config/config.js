@@ -24,7 +24,7 @@ module.exports = {
     cookieOptions: {
         name: 'session',
         keys: ['key1'],
-        maxAge: 30000,
+        maxAge: 60000,
         secure: true,
         httpOnly: true,
         sameSite: 'none'

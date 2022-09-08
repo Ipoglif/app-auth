@@ -23,8 +23,8 @@ async function generateTokens (id) {
         username: 'admin',
         psw: 'admin'
     }
-    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '15000'})
-    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '30000'})
+    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {expiresIn: '1m'})
+    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {expiresIn: '2m'})
 
     const tokenData = await db('accounts').where('id', id)
 
@@ -76,7 +76,7 @@ async function login(req, res) {
         })
 
         res.cookie('RefreshToken', tokens.refreshToken, {
-            maxAge: 30000,
+            maxAge: 60000,
             httpOnly: true,
             sameSite: 'none',
             secure: true
