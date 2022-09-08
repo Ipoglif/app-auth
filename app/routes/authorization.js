@@ -149,7 +149,7 @@ async function logout(req, res) {
 
         await db('accounts')
             .where('refreshToken', cookie)
-            .update('refreshToken', null)
+            .update('refreshToken', 'logout')
             .then(() => message.db = 'Token in db equal NULL')
 
         res.clearCookie('RefreshToken')
