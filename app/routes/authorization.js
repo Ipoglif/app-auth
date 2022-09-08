@@ -14,7 +14,7 @@ router.post('/reg', reg)
 router.post('/login', login)
 router.get('/me', authMiddleware, me)
 router.get('/refresh', refresh)
-router.post('/logout', logout)
+router.get('/logout', logout)
 
 module.exports = router
 
@@ -91,8 +91,6 @@ async function login(req, res) {
 
 async function refresh(req, res) {
     try {
-        console.log(req.headers)
-
         const cookie = req.headers.cookie.split('=')[1]
 
         if (!cookie) return res.status(401).json({
@@ -110,8 +108,6 @@ async function refresh(req, res) {
                 .update('refreshToken', tokens.refreshToken)
                 .then(() => console.log('Token updated'))
         }
-
-
 
         res.cookie('RefreshToken', tokens.refreshToken, {
             maxAge: 60000,
@@ -147,6 +143,7 @@ async function me(req, res) {
 async function logout(req, res) {
     try {
         console.log('RefreshToken')
+        console.log(req.headers)
         const message = {}
         const cookie = req.headers.cookie.split('=')[1]
         await db('accounts')
@@ -155,7 +152,7 @@ async function logout(req, res) {
             .then(() => message.db = 'Token in db equal NULL')
 
         res.clearCookie('RefreshToken')
-        res.clearCookie('Authorization')
+
         message.refreshToken = 'Token refresh is clean '
 
         return res.json(message)
