@@ -113,7 +113,7 @@ async function refresh(req, res) {
             maxAge: 60000,
             httpOnly: true,
             sameSite: 'none',
-            secure: false
+            secure: true
         })
 
         return res.json(tokens)
@@ -153,7 +153,11 @@ async function logout(req, res) {
             .update('refreshToken', 'null')
             .then(() => message.db = 'Token in db equal NULL')
 
-        res.clearCookie(`RefreshToken=${cookie}`)
+        res.clearCookie('RefreshToken', {
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true
+        })
 
         message.refreshToken = 'Token refresh is clean '
 
