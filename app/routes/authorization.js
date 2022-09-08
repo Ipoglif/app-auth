@@ -114,7 +114,7 @@ async function refresh(req, res) {
         res.cookie('RefreshToken', tokens.refreshToken, {
             maxAge: 60000,
             httpOnly: true,
-            // sameSite: 'none',
+            sameSite: 'none',
             // secure: true
         })
 
