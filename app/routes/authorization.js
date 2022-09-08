@@ -94,26 +94,21 @@ async function refresh(req, res) {
         const cookie = req.headers.cookie
         const onlyCookie = cookie.split('=')[1]
 
-        if (!cookie) return res.status(401).json({
-            message: 'Ошибка токена иди нахуй'
-        })
-
+        if (!cookie) {
+            throw res.status(401).json({
+                message: 'Ошибка токена иди нахуй'
+            })
+        }
         const tokenData = await db('accounts').where('refreshToken', onlyCookie)
 
         const tokens = await generateTokens(1)
 
-        try {
-
-            if (tokenData[0]) {
-                tokenData.refreshToken = tokens.refreshToken
-                db('accounts')
-                    .where('refreshToken', onlyCookie)
-                    .update('refreshToken', tokens.refreshToken)
-                    .then(() => console.log('Token updated'))
-            }
-
-        } catch (e) {
-            return res.status(503).json('Db error')
+        if (tokenData[0]) {
+            tokenData.refreshToken = tokens.refreshToken
+            db('accounts')
+                .where('refreshToken', onlyCookie)
+                .update('refreshToken', tokens.refreshToken)
+                .then(() => console.log('Token updated'))
         }
 
 
