@@ -91,22 +91,20 @@ async function login(req, res) {
 
 async function refresh(req, res) {
     try {
-        const cookie = req.headers.cookie
-        const onlyCookie = cookie.split('=')[1]
+        const cookie = req.headers.cookie.split('=')[1]
 
-        if (!cookie) {
-            throw res.status(401).json({
-                message: 'Ошибка токена иди нахуй'
-            })
-        }
-        const tokenData = await db('accounts').where('refreshToken', onlyCookie)
+        if (!cookie) throw res.status(401).json({
+            message: 'Ошибка токена иди нахуй'
+        })
+
+        const tokenData = await db('accounts').where('refreshToken', cookie)
 
         const tokens = await generateTokens(1)
 
         if (tokenData[0]) {
             tokenData.refreshToken = tokens.refreshToken
             db('accounts')
-                .where('refreshToken', onlyCookie)
+                .where('refreshToken', cookie)
                 .update('refreshToken', tokens.refreshToken)
                 .then(() => console.log('Token updated'))
         }
@@ -122,6 +120,7 @@ async function refresh(req, res) {
         return res.json(tokens)
     } catch (e) {
         console.error(e)
+        return res.status(401).json('User not authorized')
     }
 }
 
