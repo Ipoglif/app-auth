@@ -18,7 +18,7 @@ router.get('/logout', logout)
 
 module.exports = router
 
-async function generateTokens (id) {
+async function generateTokens(id) {
     const payload = {
         username: 'admin',
         psw: 'admin'
