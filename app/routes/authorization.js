@@ -102,13 +102,20 @@ async function refresh(req, res) {
 
         const tokens = await generateTokens(1)
 
-        if (tokenData[0]) {
-            tokenData.refreshToken = tokens.refreshToken
-            db('accounts')
-                .where('refreshToken', onlyCookie)
-                .update('refreshToken', tokens.refreshToken)
-                .then(() => console.log('Token updated'))
+        try {
+
+            if (tokenData[0]) {
+                tokenData.refreshToken = tokens.refreshToken
+                db('accounts')
+                    .where('refreshToken', onlyCookie)
+                    .update('refreshToken', tokens.refreshToken)
+                    .then(() => console.log('Token updated'))
+            }
+
+        } catch (e) {
+            return res.status(503).json('Db error')
         }
+
 
         res.cookie('RefreshToken', tokens.refreshToken, {
             maxAge: 60000,
