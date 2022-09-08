@@ -142,10 +142,11 @@ async function me(req, res) {
 
 async function logout(req, res) {
     try {
-        console.log('RefreshToken')
-        console.log(req.headers)
         const message = {}
         const cookie = req.headers.cookie.split('=')[1]
+
+        console.log(cookie)
+
         await db('accounts')
             .where('refreshToken', cookie)
             .update('refreshToken', null)
