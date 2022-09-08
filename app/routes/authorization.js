@@ -153,7 +153,7 @@ async function logout(req, res) {
             .update('refreshToken', 'null')
             .then(() => message.db = 'Token in db equal NULL')
 
-        res.clearCookie('RefreshToken')
+        res.clearCookie(`RefreshToken=${cookie}`)
 
         message.refreshToken = 'Token refresh is clean '
 
