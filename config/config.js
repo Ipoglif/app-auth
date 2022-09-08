@@ -27,7 +27,7 @@ module.exports = {
         maxAge: 60000,
         // secure: true,
         httpOnly: true,
-        // sameSite: 'none'
+        sameSite: 'none'
     },
     corsConfig: {
         origin: true,
