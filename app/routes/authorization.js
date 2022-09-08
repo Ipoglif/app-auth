@@ -115,7 +115,6 @@ async function refresh(req, res) {
             maxAge: 60000,
             httpOnly: true,
             sameSite: 'none',
-            // secure: true
         })
 
         return res.json(tokens)
