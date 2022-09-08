@@ -8,11 +8,11 @@ module.exports = {
     mysql: {
         client: 'mysql2',
         connection: {
-            host: 'sql8.freemysqlhosting.net',
+            host: '141.8.192.193',
             port: 3306,
-            user: 'sql8516569',
-            password: 'u6Dfw5RN1r',
-            database: 'sql8516569'
+            user: 'a0717002_db-blog',
+            password: 'eJ7pC8aJ9e',
+            database: 'a0717002_db-blog'
         }
     },
     ftp: {
@@ -25,7 +25,7 @@ module.exports = {
         name: 'session',
         keys: ['key1'],
         maxAge: 60000,
-        // secure: true,
+        secure: true,
         httpOnly: true,
         sameSite: 'none'
     },

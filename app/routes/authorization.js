@@ -79,7 +79,7 @@ async function login(req, res) {
             maxAge: 60000,
             httpOnly: true,
             sameSite: 'none',
-            // secure: true
+            secure: true
         })
 
         return res.json(tokens)
@@ -101,7 +101,7 @@ async function refresh(req, res) {
 
         const tokenData = await db('accounts').where('refreshToken', cookie)
 
-        const tokens = await generateTokens(0)
+        const tokens = await generateTokens(1)
 
         if (tokenData[0]) {
             tokenData.refreshToken = tokens.refreshToken
