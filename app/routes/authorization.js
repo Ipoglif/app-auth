@@ -78,8 +78,8 @@ async function login(req, res) {
         res.cookie('RefreshToken', tokens.refreshToken, {
             maxAge: 60000,
             httpOnly: true,
-            sameSite: 'none',
-            secure: true
+            // sameSite: 'none',
+            // secure: true
         })
 
         return res.json(tokens)
