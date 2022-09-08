@@ -15,7 +15,7 @@ const app = express()
 app.use(express.json())
 app.use(express.static(__dirname))
 app.use(cookieParser())
-// app.use(cookieSession(cookieOptions))
+app.use(cookieSession(cookieOptions))
 app.use(cors(corsConfig))
 app.options('*', cors(corsConfig))
 
