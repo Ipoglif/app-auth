@@ -145,11 +145,12 @@ async function logout(req, res) {
         const message = {}
         const cookie = req.headers.cookie.split('=')[1]
 
-        console.log(cookie)
+        console.log('headers -> ', req.headers)
+        console.log('only cookie ', cookie)
 
         await db('accounts')
             .where('refreshToken', cookie)
-            .update('refreshToken', 'logout')
+            .update('refreshToken', 'null')
             .then(() => message.db = 'Token in db equal NULL')
 
         res.clearCookie('RefreshToken')
