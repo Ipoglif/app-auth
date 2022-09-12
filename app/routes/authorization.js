@@ -55,6 +55,7 @@ async function reg(req, res) {
         }
     } catch (e) {
         console.error(e)
+        return res.status(400).json({message: e})
     }
 }
 
@@ -63,10 +64,10 @@ async function login(req, res) {
         const { username, password } = req.body || req.params
 
         const result = await db('accounts').where('username', username)
-        if (!result[0]) return res.status(400).json(`${username}: User not found. Please Registr`)
+        if (!result[0]) throw res.status(400).json(`${username}: User not found. Please Registr`)
 
         const validPassword = bcrypt.compareSync(password, result[0].psw)
-        if (!validPassword) return res.status(400).json('Password Error')
+        if (!validPassword) throw res.status(400).json('Password Error')
 
         const tokens = await generateTokens(result[0].id)
 
