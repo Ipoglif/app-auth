@@ -9,9 +9,7 @@ async function refresh(req, res) {
     try {
         const cookie = req.headers.cookie.split('=')[1]
 
-        if (!cookie) throw res.status(401).json({
-            message: 'Ошибка токена иди нахуй'
-        })
+        if (!cookie) throw res.status(401).json({message: 'Ошибка токена иди нахуй'})
 
         const tokenData = await db('accounts').where('refreshToken', cookie)
 
@@ -25,7 +23,7 @@ async function refresh(req, res) {
                 .then(() => console.log('Token updated'))
         }
 
-        res.cookie('RefreshToken', tokens.refreshToken, {
+        res.cookie('refreshToken', tokens.refreshToken, {
             maxAge: 60000,
             httpOnly: true,
             sameSite: 'none',
@@ -82,10 +80,10 @@ async function login(req, res) {
         scheme.user_name = resultdb[0].username
 
         res.set({
-            'Authorization' : tokens.accessToken
+            'accessToken' : tokens.accessToken
         })
 
-        res.cookie('RefreshToken', tokens.refreshToken, {
+        res.cookie('refreshToken', tokens.refreshToken, {
             maxAge: 60000,
             httpOnly: true,
             sameSite: 'none',
@@ -96,9 +94,7 @@ async function login(req, res) {
 
     } catch (e) {
         console.error(e)
-        return res.json({
-            message: e
-        })
+        return res.json({message: e})
     }
 }
 
@@ -115,7 +111,7 @@ async function logout(req, res) {
             .update('refreshToken', 'null')
             .then(() => message.db = 'Token in db equal NULL')
 
-        res.clearCookie('RefreshToken', {
+        res.clearCookie('refreshToken', {
             httpOnly: true,
             sameSite: 'none',
             secure: true
