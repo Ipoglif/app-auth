@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken")
 
 const db = require('knex')(mysql)
 
-router.get('/showUsers', showUsers)
+router.get('/showUsers', authMiddleware, showUsers)
 router.post('/reg', reg)
 router.post('/login', login)
 router.get('/me', authMiddleware, me)
@@ -86,6 +86,9 @@ async function login(req, res) {
 
     } catch (e) {
         console.error(e)
+        return res.json({
+            message: e
+        })
     }
 }
 
@@ -108,7 +111,6 @@ async function refresh(req, res) {
                 .update('refreshToken', tokens.refreshToken)
                 .then(() => console.log('Token updated'))
         }
-
 
         res.cookie('RefreshToken', tokens.refreshToken, {
             maxAge: 60000,
@@ -172,8 +174,13 @@ async function logout(req, res) {
 async function showUsers(req, res) {
     try {
         const result = await db('accounts').select('*')
-        return res.json({result})
+        return res.json({
+            allUsers : result
+        })
     } catch (e) {
         console.error(e)
+        return res.json({
+            message: e
+        })
     }
 }

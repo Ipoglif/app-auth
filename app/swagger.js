@@ -29,6 +29,13 @@
  *      responses:
  *          200:
  *              description: show all users in db
+ *      securitySchemes:
+ *          bearerAuth:
+ *              type: http
+ *              scheme: bearer
+ *              bearerFormat: JWT
+ *      security:
+ *              - bearerAuth: []
  */
 
 /**
