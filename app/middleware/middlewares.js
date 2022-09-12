@@ -1,7 +1,8 @@
-const jwt = require("jsonwebtoken")
 const { mysql } = require("../../config/config")
 
 const db = require('knex')(mysql)
+
+const jwt = require("jsonwebtoken")
 
 function authMiddleware (req, res, next) {
     if (req.method === 'OPTIONS') next()
@@ -22,4 +23,4 @@ function authMiddleware (req, res, next) {
     }
 }
 
-module.exports = { authMiddleware }
+module.exports = { authMiddleware : authMiddleware }
