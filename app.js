@@ -3,7 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 
-const routers = require('./app/routes/authorization')
+const routers = require('./app/routes/authorization.routes')
 
 const { port, cookieOptions, corsConfig, swagger } = require('./config/config')
 
