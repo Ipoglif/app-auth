@@ -9,10 +9,9 @@ const jwt = require("jsonwebtoken")
 
 const db = require('knex')(mysql)
 
-router.get('/showUsers', authMiddleware, showUsers)
 router.post('/reg', reg)
 router.post('/login', login)
-router.get('/me', authMiddleware, me)
+router.get('/showUsers', authMiddleware, showUsers)
 router.get('/refresh', refresh)
 router.get('/logout', logout)
 
@@ -71,6 +70,16 @@ async function login(req, res) {
 
         const tokens = await generateTokens(result[0].id)
 
+        let scheme = {}
+
+        const resultdb = await db('accounts').where({username: username})
+
+        scheme.email = 'test@gmail.com'
+        scheme.id = resultdb[0].id
+        scheme.role = 'admin'
+        scheme.user_icon = 'URL_icon'
+        scheme.user_name = resultdb[0].username
+
         res.set({
             'Authorization' : tokens.accessToken
         })
@@ -82,7 +91,7 @@ async function login(req, res) {
             secure: true
         })
 
-        return res.json(tokens)
+        return res.json(scheme)
 
     } catch (e) {
         console.error(e)
@@ -119,28 +128,10 @@ async function refresh(req, res) {
             secure: true
         })
 
-        return res.json(tokens)
+        return res.json({message : 'Succes'})
     } catch (e) {
         console.error(e)
         return res.status(401).json('User not authorized')
-    }
-}
-
-async function me(req, res) {
-    try {
-        let scheme = {}
-
-        const result = await db('accounts').where({username: 'admin'})
-
-        scheme.email = 'test@gmail.com'
-        scheme.id = result[0].id
-        scheme.role = 'admin'
-        scheme.user_icon = 'URL_icon'
-        scheme.user_name = result[0].username
-
-        return res.json(scheme)
-    } catch (e) {
-        console.error(e)
     }
 }
 
