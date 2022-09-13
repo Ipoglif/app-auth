@@ -82,7 +82,7 @@ async function login(req, res) {
         const userResult = await userRepository.search({id})
 
         res.set({accessToken})
-        res.cookie({refreshToken}, {
+        res.cookie('refreshToken', refreshToken, {
             maxAge: 60000,
             httpOnly: true,
             sameSite: 'none',

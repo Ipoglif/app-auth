@@ -11,9 +11,7 @@ async function generateTokens(data) {
 
     const tokenData = await authRepository.search({email})
 
-    if (tokenData) {
-        await authRepository.update({refreshToken}, {email})
-    }
+    if (tokenData) await authRepository.update({refreshToken}, {email})
 
     return {
         accessToken,
