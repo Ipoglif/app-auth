@@ -83,7 +83,7 @@ async function login(req, res) {
             secure: true
         })
 
-        return res.json(accessToken)
+        return res.json({accessToken})
     } catch (e) {
         console.error(e)
         return res.json({message: e})
