@@ -1,7 +1,6 @@
 const { generateTokens } = require('./tokens.handlers')
 const authRepository = require('../repositories/auth.repository')
 const userRepository = require('../repositories/users.repository')
-const { User } = require('../models/users.models')
 
 const bcrypt = require("bcryptjs")
 
@@ -80,11 +79,9 @@ async function login(req, res) {
             psw
         })
 
-
         const userResult = await userRepository.search({id})
 
         res.set({accessToken})
-
         res.cookie({refreshToken}, {
             maxAge: 60000,
             httpOnly: true,
@@ -92,8 +89,7 @@ async function login(req, res) {
             secure: true
         })
 
-        return res.json(userResult)
-
+        return res.json({userResult, accessToken})
     } catch (e) {
         console.error(e)
         return res.json({message: e})
