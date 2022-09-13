@@ -3,7 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 
-const routes = require('./app/routes/authorization.routes')
+const routers = require('./app/routes/authorization.routes')
 
 const { port, cookieOptions, corsConfig, swagger } = require('./config/config')
 
@@ -19,7 +19,7 @@ app.use(cookieSession(cookieOptions))
 app.use(cors(corsConfig))
 app.options('*', cors(corsConfig))
 
-app.use('/api', routes)
+app.use('/api', routers)
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swagger)))
 
 const start = () => {

@@ -6,7 +6,7 @@ const { showUsers, me } = require('../handlers/users.handlers')
 const Router = require('express')
 const router = new Router()
 
-router.post('/reg', registration)
+router.post('/registration', registration)
 router.post('/login', login)
 router.get('/me', authMiddleware, me)
 router.get('/showUsers', authMiddleware, showUsers)
