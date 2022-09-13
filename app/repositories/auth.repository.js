@@ -9,7 +9,7 @@ async function update(record, symbol) {
 }
 
 async function search(symbol) {
-    const [result] = await db(TABLE_NAME).where(symbol)
+    const [ result ] = await db(TABLE_NAME).where(symbol)
     return result
 }
 

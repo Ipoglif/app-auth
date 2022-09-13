@@ -6,18 +6,16 @@ const bcrypt = require("bcryptjs")
 
 async function refresh(req, res) {
     try {
-        const refreshToken = req.headers.cookie.split('=')[1]
+        const [ empty, tokenData ] = req.headers.cookie.split('=')
 
-        if (!refreshToken) throw res.status(401).json({message: 'Ошибка токена иди нахуй'})
+        if (!tokenData) throw res.status(401).json({message: 'Ошибка токена иди нахуй'})
 
-        const tokenData = await repository.search({refreshToken})
+        const authData = await authRepository.search({tokenData})
 
-        const tokens = await generateTokens(tokenData.email)
+        const tokens = await generateTokens(authData.email)
 
-        if (tokenData) {
-            await authRepository.update({
-                'refreshToken': tokens.refreshToken},
-                {refreshToken})
+        if (authData) {
+            await authRepository.update({'refreshToken': tokens.refreshToken}, {tokenData})
         }
 
         res.cookie('refreshToken', tokens.refreshToken, {
@@ -72,14 +70,10 @@ async function login(req, res) {
         const validPassword = bcrypt.compareSync(password, result.psw)
         if (!validPassword) return res.status(400).json({message: 'Password Error'})
 
-        const { psw, id } = result
-
         const { accessToken, refreshToken } = await generateTokens({
             email,
-            psw
+            psw: result.psw
         })
-
-        const userResult = await userRepository.search({id})
 
         res.set({accessToken})
         res.cookie('refreshToken', refreshToken, {
@@ -89,7 +83,7 @@ async function login(req, res) {
             secure: true
         })
 
-        return res.json({userResult, accessToken})
+        return res.json(accessToken)
     } catch (e) {
         console.error(e)
         return res.json({message: e})
@@ -98,11 +92,9 @@ async function login(req, res) {
 
 async function logout(req, res) {
     try {
-        const [ fistData, secData]  = req.headers.cookie.split('=')
+        const [ empty, tokenData ]  = req.headers.cookie.split('=')
 
-        let refreshToken = null
-
-        await authRepository.update({refreshToken}, {secData})
+        await authRepository.update({refreshToken: null}, {tokenData})
 
         res.clearCookie('refreshToken', {
             httpOnly: true,
