@@ -1,26 +1,24 @@
 const { generateTokens } = require('./tokens.handlers')
-const { mysql } = require("../../config/config")
-
-const db = require('knex')(mysql)
+const authRepository = require('../repositories/auth.repository')
+const userRepository = require('../repositories/users.repository')
+const { User } = require('../models/users.models')
 
 const bcrypt = require("bcryptjs")
 
 async function refresh(req, res) {
     try {
-        const cookie = req.headers.cookie.split('=')[1]
+        const refreshToken = req.headers.cookie.split('=')[1]
 
-        if (!cookie) throw res.status(401).json({message: 'Ошибка токена иди нахуй'})
+        if (!refreshToken) throw res.status(401).json({message: 'Ошибка токена иди нахуй'})
 
-        const tokenData = await db('accounts').where('refreshToken', cookie)
+        const tokenData = await repository.search({refreshToken})
 
-        const tokens = await generateTokens(1)
+        const tokens = await generateTokens(tokenData.email)
 
-        if (tokenData[0]) {
-            tokenData.refreshToken = tokens.refreshToken
-            db('accounts')
-                .where('refreshToken', cookie)
-                .update('refreshToken', tokens.refreshToken)
-                .then(() => console.log('Token updated'))
+        if (tokenData) {
+            await authRepository.update({
+                'refreshToken': tokens.refreshToken},
+                {refreshToken})
         }
 
         res.cookie('refreshToken', tokens.refreshToken, {
@@ -39,17 +37,25 @@ async function refresh(req, res) {
 
 async function registration(req, res) {
     try {
-        const { username, password } = req.body || req.params
+        const { email, password } = req.body || req.params
 
-        const result = await db('accounts').where('username', username)
+        const result = await authRepository.search({email})
 
-        if (result[0] !== undefined && !result[0].length) {
-            return res.status(400).json(`${username}: Name already in use`)
+        if (result !== undefined && !result.length) {
+            return res.status(400).json(`${email}: Name already in use`)
         } else {
-            await db('accounts').insert({
-                username: username,
+            await authRepository.insert({
+                email: email,
                 psw: bcrypt.hashSync(password, 7),
-            }).then(() => {return res.json(`User ${username} created`)})
+            }).then( () => {
+                userRepository.insert({
+                    email,
+                    user_name: 'sec',
+                    user_icon: 'sec_personal_icon',
+                    role: 'user'
+                })
+            })
+            return res.json({message: `User ${email}, created`})
         }
     } catch (e) {
         console.error(e)
@@ -59,38 +65,34 @@ async function registration(req, res) {
 
 async function login(req, res) {
     try {
-        const { username, password } = req.body || req.params
+        const { email, password } = req.body || req.params
 
-        const result = await db('accounts').where('username', username)
-        if (!result[0]) return res.status(400).json({message: `${username}: User not found. Please Registr`})
+        const result = await authRepository.search({email})
+        if (!result) return res.status(400).json({message: `${email}: User not found. Please Registr`})
 
-        const validPassword = bcrypt.compareSync(password, result[0].psw)
+        const validPassword = bcrypt.compareSync(password, result.psw)
         if (!validPassword) return res.status(400).json({message: 'Password Error'})
 
-        const tokens = await generateTokens(result[0].id)
+        const { psw, id } = result
 
-        let scheme = {}
-
-        const resultdb = await db('accounts').where({username: username})
-
-        scheme.email = 'test@gmail.com'
-        scheme.id = resultdb[0].id
-        scheme.role = 'admin'
-        scheme.user_icon = 'URL_icon'
-        scheme.user_name = resultdb[0].username
-
-        res.set({
-            'accessToken' : tokens.accessToken
+        const { accessToken, refreshToken } = await generateTokens({
+            email,
+            psw
         })
 
-        res.cookie('refreshToken', tokens.refreshToken, {
+
+        const userResult = await userRepository.search({id})
+
+        res.set({accessToken})
+
+        res.cookie({refreshToken}, {
             maxAge: 60000,
             httpOnly: true,
             sameSite: 'none',
             secure: true
         })
 
-        return res.json(scheme)
+        return res.json(userResult)
 
     } catch (e) {
         console.error(e)
@@ -100,16 +102,11 @@ async function login(req, res) {
 
 async function logout(req, res) {
     try {
-        const message = {}
-        const cookie = req.headers.cookie.split('=')[1]
+        const [ fistData, secData]  = req.headers.cookie.split('=')
 
-        console.log('headers -> ', req.headers)
-        console.log('only cookie ', cookie)
+        let refreshToken = null
 
-        await db('accounts')
-            .where('refreshToken', cookie)
-            .update('refreshToken', 'null')
-            .then(() => message.db = 'Token in db equal NULL')
+        await authRepository.update({refreshToken}, {secData})
 
         res.clearCookie('refreshToken', {
             httpOnly: true,
@@ -117,9 +114,7 @@ async function logout(req, res) {
             secure: true
         })
 
-        message.refreshToken = 'Token refresh is clean '
-
-        return res.json(message)
+        return res.json({message: 'Token refresh is clean'})
     } catch (e) {
         console.error(e)
     }

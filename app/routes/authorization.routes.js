@@ -1,6 +1,6 @@
 const { authMiddleware } = require('../middleware/middlewares')
 
-const { refresh, registration, login, logout, } = require('../handlers/auth.handlers')
+const { refresh, registration, login, logout } = require('../handlers/auth.handlers')
 const { showUsers } = require('../handlers/users.handlers')
 
 const Router = require('express')

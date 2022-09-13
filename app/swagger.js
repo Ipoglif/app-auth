@@ -13,10 +13,10 @@
  *                  type: string
  *                  description: the password
  *          required:
- *              - username
+ *              - email
  *              - password
  *          example:
- *              username: admin
+ *              email: admin
  *              password: admin
  */
 
@@ -40,7 +40,7 @@
 
 /**
  * @swagger
- * /api/reg:
+ * /api/registration:
  *  post:
  *      summary: create new user
  *      tags: [Authorization]

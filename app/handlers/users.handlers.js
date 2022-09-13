@@ -1,9 +1,8 @@
-const { mysql } = require("../../config/config")
-const db = require('knex')(mysql)
+const usersRepository = require('../repositories/users.repository')
 
 async function showUsers(req, res) {
     try {
-        const result = await db('accounts').select('*')
+        const result = usersRepository.select()
         return res.json({
             allUsers : result
         })
