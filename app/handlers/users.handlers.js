@@ -3,9 +3,9 @@ const authRepository = require('../repositories/auth.repository')
 
 async function me(req, res) {
     try {
-        const [ empty, tokenData ] = req.headers.cookie.split('=')
+        const [ empty, refreshToken ] = req.headers.cookie.split('=')
 
-        await authRepository.search({tokenData})
+        await authRepository.search({refreshToken})
             .then( async ( {id} ) => {
                 return res.json({
                     userData: await usersRepository.search({id})
