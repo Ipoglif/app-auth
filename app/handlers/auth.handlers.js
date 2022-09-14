@@ -10,12 +10,12 @@ async function refresh(req, res) {
 
         if (!tokenData) throw res.status(401).json({message: 'Error Token'})
 
-        const authData = await authRepository.search({'refrshToken': tokenData})
+        const authData = await authRepository.search({refreshToken: tokenData})
 
         const tokens = await generateTokens(authData.email)
 
         if (authData) {
-            await authRepository.update({'refreshToken': tokens.refreshToken}, {'refrshToken': tokenData})
+            await authRepository.update({refreshToken: tokens.refreshToken}, {refrshToken: tokenData})
         }
 
         res.cookie('refreshToken', tokens.refreshToken, {
@@ -38,22 +38,20 @@ async function registration(req, res) {
 
         const result = await authRepository.search({email})
 
-        if (result !== undefined && !result.length) {
-            return res.status(400).json(`${email}: Name already in use`)
-        } else {
-            await authRepository.insert({
-                email: email,
-                psw: bcrypt.hashSync(password, 7),
-            }).then( (user_id) => {
+        if (result !== undefined && !result.length) return res.status(400).json(`${email}: Name already in use`)
+
+        await authRepository.insert({
+            email: email,
+            psw: bcrypt.hashSync(password, 7),
+        }).then( (id) => {
                 userRepository.insert({
-                    user_id,
+                    user_id: id,
                     user_name: 'sec',
                     user_icon: 'sec_personal_icon',
-                    role: 'user'
-                })
-            })
-            return res.json({message: `User ${email}, created`})
-        }
+                    role: 'user'})
+        })
+
+        return res.json({message: `User ${email}, created`})
     } catch (e) {
         console.error(e)
         return res.status(400).json({message: e})

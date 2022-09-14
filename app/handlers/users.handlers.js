@@ -7,7 +7,7 @@ async function me(req, res) {
 
         await authRepository.search({refreshToken})
             .then( async ( {id} ) => {
-                const userData = await usersRepository.search({'user_id': id})
+                const userData = await usersRepository.search({user_id : id})
                 return res.json({userData})
             })
     } catch (e) {
