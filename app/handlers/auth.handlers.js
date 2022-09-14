@@ -6,9 +6,9 @@ const bcrypt = require("bcryptjs")
 
 async function refresh(req, res) {
     try {
-        const [ empty, tokenData ] = req.headers.cookie.split('=')
+        if (!req.headers.cookie) throw res.status(401).json({message: 'Error Token'})
 
-        if (!tokenData) throw res.status(401).json({message: 'Error Token'})
+        const [ empty, tokenData ] = req.headers.cookie.split('=')
 
         const authData = await authRepository.search({refreshToken: tokenData})
 
