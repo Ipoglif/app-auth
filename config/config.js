@@ -5,6 +5,21 @@ process.env.JWT_ACCESS_SECRET='SERVER_SECRET_KEY'
 process.env.JWT_REFRESH_SECRET='SERVER_REFRESH_SECRET_KEY'
 
 module.exports = {
+    connections: {
+        mysql: {
+            host: '141.8.192.193',
+            port: 3306,
+            user: 'a0717002_db-blog',
+            password: 'eJ7pC8aJ9e',
+            database: 'a0717002_db-blog'
+        },
+        ftp: {
+            host: '185.219.43.43',
+            port: 21,
+            user: 'testblog',
+            password: 'hX9nA5lI2c'
+        },
+    },
     mysql: {
         client: 'mysql2',
         connection: {
@@ -14,12 +29,6 @@ module.exports = {
             password: 'eJ7pC8aJ9e',
             database: 'a0717002_db-blog'
         }
-    },
-    ftp: {
-        host: '185.219.43.43',
-        port: 21,
-        user: 'testblog',
-        password: 'hX9nA5lI2c'
     },
     cookieOptions: {
         name: 'session',
