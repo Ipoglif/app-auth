@@ -15,7 +15,7 @@ async function refresh(req, res) {
         const tokens = await generateTokens(authData.email)
 
         if (authData) {
-            await authRepository.update({refreshToken: tokens.refreshToken}, {refrshToken: tokenData})
+            await authRepository.update({refreshToken: tokens.refreshToken}, {refreshToken: tokenData})
         }
 
         res.cookie('refreshToken', tokens.refreshToken, {
@@ -90,9 +90,9 @@ async function login(req, res) {
 
 async function logout(req, res) {
     try {
-        const [ empty, tokenData ]  = req.headers.cookie.split('=')
+        const [ empty, refreshToken ]  = req.headers.cookie.split('=')
 
-        await authRepository.update({refreshToken: null}, {tokenData})
+        await authRepository.update({refreshToken: null}, {refreshToken})
 
         res.clearCookie('refreshToken', {
             httpOnly: true,
