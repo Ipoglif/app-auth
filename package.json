@@ -1,6 +1,6 @@
 {
 	"scripts": {
-		"start": "node app.js"
+		"test": "jest -i --verbose --coverage --collectCoverageFrom=app/handlers/*.js --colors"
 	},
 	"dependencies": {
 		"bcryptjs": "^2.4.3",

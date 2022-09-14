@@ -90,9 +90,9 @@ async function login(req, res) {
 
 async function logout(req, res) {
     try {
-        const [ empty, refreshToken ]  = req.headers.cookie.split('=')
+        if (!req.headers.cookie) return res.status(401).json({message: 'Error Token'})
 
-        if (!refreshToken) return  res.status(401).json({message: 'Error Token'})
+        const [ empty, refreshToken ]  = req.headers.cookie.split('=')
 
         await authRepository.update({refreshToken: null}, {refreshToken})
 
