@@ -8,14 +8,14 @@ async function refresh(req, res) {
     try {
         const [ empty, tokenData ] = req.headers.cookie.split('=')
 
-        if (!tokenData) throw res.status(401).json({message: 'Ошибка токена иди нахуй'})
+        if (!tokenData) throw res.status(401).json({message: 'Error Token'})
 
-        const authData = await authRepository.search({tokenData})
+        const authData = await authRepository.search({'refrshToken': tokenData})
 
         const tokens = await generateTokens(authData.email)
 
         if (authData) {
-            await authRepository.update({'refreshToken': tokens.refreshToken}, {tokenData})
+            await authRepository.update({'refreshToken': tokens.refreshToken}, {'refrshToken': tokenData})
         }
 
         res.cookie('refreshToken', tokens.refreshToken, {
@@ -44,9 +44,9 @@ async function registration(req, res) {
             await authRepository.insert({
                 email: email,
                 psw: bcrypt.hashSync(password, 7),
-            }).then( () => {
+            }).then( (user_id) => {
                 userRepository.insert({
-                    email,
+                    user_id,
                     user_name: 'sec',
                     user_icon: 'sec_personal_icon',
                     role: 'user'

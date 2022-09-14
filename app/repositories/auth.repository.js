@@ -14,7 +14,8 @@ async function search(symbol) {
 }
 
 async function insert(record) {
-    await db(TABLE_NAME).insert(record)
+    const [ id ] = await db(TABLE_NAME).insert(record)
+    return id
 }
 
 module.exports = {
