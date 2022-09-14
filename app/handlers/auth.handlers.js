@@ -92,6 +92,8 @@ async function logout(req, res) {
     try {
         const [ empty, refreshToken ]  = req.headers.cookie.split('=')
 
+        if (!refreshToken) return  res.status(401).json({message: 'Error Token'})
+
         await authRepository.update({refreshToken: null}, {refreshToken})
 
         res.clearCookie('refreshToken', {
