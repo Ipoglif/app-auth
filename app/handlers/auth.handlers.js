@@ -18,6 +18,7 @@ async function refresh(req, res) {
             await authRepository.update({refreshToken: tokens.refreshToken}, {refreshToken: tokenData})
         }
 
+        res.set({accessToken: tokens.accessToken})
         res.cookie('refreshToken', tokens.refreshToken, {
             maxAge: 60000,
             httpOnly: true,
