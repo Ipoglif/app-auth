@@ -6,24 +6,19 @@ const bcrypt = require("bcryptjs")
 
 async function refresh(req, res) {
     try {
-        console.log(req.headers)
-        console.log(req.headers.cookie)
+        if (!req.headers.cookie) return  res.status(401).json({message: 'Error Token'})
 
-        if (req.headers.cookie === undefined) return res.status(401).json({message: 'Error Token'})
+        const [ empty, tokenData ] = req.headers.cookie.split('=')
 
-        const token = req.headers.cookie.split('=')[1]
-
-        console.log(token)
-
-        const authData = await authRepository.search({refreshToken: token})
+        const authData = await authRepository.search({refreshToken: tokenData})
 
         const tokens = await generateTokens(authData.email)
 
         if (authData) {
-            await authRepository.update({refreshToken: tokens.refreshToken}, {refreshToken: token})
+            await authRepository.update({refreshToken: tokens.refreshToken}, {refreshToken: tokenData})
         }
 
-        res.set({accessToken: tokens.accessToken})
+        res.set({accessToken})
         res.cookie('refreshToken', tokens.refreshToken, {
             maxAge: 60000,
             httpOnly: true,
@@ -96,7 +91,7 @@ async function login(req, res) {
 
 async function logout(req, res) {
     try {
-        if (req.headers.cookie === undefined) return res.status(401).json({message: 'Error Token'})
+        if (!req.headers.cookie) return res.status(401).json({message: 'Error Token'})
 
         const [ empty, refreshToken ]  = req.headers.cookie.split('=')
 

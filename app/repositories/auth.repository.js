@@ -3,7 +3,8 @@ const db = require('../libs/db')
 const TABLE_NAME = 'auth'
 
 async function update(record, symbol) {
-    await db(TABLE_NAME).update(record).where(symbol)
+    const result = await db(TABLE_NAME).update(record).where(symbol)
+    return result
 }
 
 async function search(symbol) {
