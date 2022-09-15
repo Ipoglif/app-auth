@@ -1,6 +1,8 @@
+const { connections } = require('../../config/config')
+
 module.exports = require('knex')({
     client: 'mysql2',
-    connection: __config.connections.mysql,
+    connection: connections.mysql,
     log: {
         warn(message) {},
         deprecate(message) {},

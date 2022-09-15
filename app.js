@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser')
 
 const routers = require('./app/routes/authorization.routes')
 
-const { port, cookieOptions, corsConfig, swagger } = require('./config/config')
+const { port, options, api } = require('./config/config')
 
 const swaggerJsDoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
@@ -15,12 +15,12 @@ const app = express()
 app.use(express.json())
 app.use(express.static(__dirname))
 app.use(cookieParser())
-app.use(cookieSession(cookieOptions))
-app.use(cors(corsConfig))
-app.options('*', cors(corsConfig))
+app.use(cookieSession(options.cookie))
+app.use(cors(options.cors))
+app.options('*', cors(options.cors))
 
 app.use('/api', routers)
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(swagger)))
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerJsDoc(api.swagger)))
 
 const start = () => {
     try {
@@ -33,3 +33,5 @@ const start = () => {
 }
 
 start()
+
+module.exports = { app }

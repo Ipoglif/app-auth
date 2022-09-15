@@ -4,6 +4,7 @@ const { refresh, registration, login, logout } = require('../handlers/auth.handl
 const { showUsers, me } = require('../handlers/users.handlers')
 
 const Router = require('express')
+
 const router = new Router()
 
 router.post('/registration', registration)

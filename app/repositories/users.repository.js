@@ -1,6 +1,4 @@
-const { mysql } = require("../../config/config")
-
-const db = require('knex')(mysql)
+const db = require('../libs/db')
 
 const TABLE_NAME = 'users'
 
