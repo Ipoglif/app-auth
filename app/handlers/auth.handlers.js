@@ -8,23 +8,29 @@ async function refresh(req, res) {
     try {
         if (!req.headers.cookie) return  res.status(401).json({message: 'Error Token'})
 
+        console.log('1')
         const [ empty, tokenData ] = req.headers.cookie.split('=')
 
+        console.log('2')
         const authData = await authRepository.search({refreshToken: tokenData})
 
+        console.log('3')
         const tokens = await generateTokens(authData.email)
 
         if (authData) {
             await authRepository.update({refreshToken: tokens.refreshToken}, {refreshToken: tokenData})
+            console.log('4')
         }
 
-        res.set({accessToken})
+        res.set(tokens.accessToken)
         res.cookie('refreshToken', tokens.refreshToken, {
             maxAge: 60000,
             httpOnly: true,
             sameSite: 'none',
             secure: true
         })
+
+        console.log('5')
 
         return res.json({message : 'Succes'})
     } catch (e) {
