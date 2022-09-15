@@ -11,14 +11,16 @@ async function refresh(req, res) {
 
         if (req.headers.cookie === undefined) return res.status(401).json({message: 'Error Token'})
 
-        const [ empty, tokenData ] = req.headers.cookie.split('=')
+        const token = req.headers.cookie.split('=')[1]
 
-        const authData = await authRepository.search({refreshToken: tokenData})
+        console.log(token)
+
+        const authData = await authRepository.search({refreshToken: token})
 
         const tokens = await generateTokens(authData.email)
 
         if (authData) {
-            await authRepository.update({refreshToken: tokens.refreshToken}, {refreshToken: tokenData})
+            await authRepository.update({refreshToken: tokens.refreshToken}, {refreshToken: token})
         }
 
         res.set({accessToken: tokens.accessToken})
