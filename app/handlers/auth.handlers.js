@@ -6,20 +6,19 @@ const bcrypt = require("bcryptjs")
 
 async function refresh(req, res) {
     try {
-        if (!req.headers.cookie) return  res.status(401).json({message: 'Error Token'})
+        if (!req.headers.cookie) return res.status(401).json({message: 'Error Token'})
 
-        console.log('1')
         const [ empty, tokenData ] = req.headers.cookie.split('=')
 
-        console.log('2')
         const authData = await authRepository.search({refreshToken: tokenData})
 
-        console.log('3')
-        const tokens = await generateTokens(authData.email)
+        const tokens = await generateTokens({
+            email: authData.email,
+            psw: authData.psw
+        })
 
         if (authData) {
             await authRepository.update({refreshToken: tokens.refreshToken}, {refreshToken: tokenData})
-            console.log('4')
         }
 
         res.set(tokens.accessToken)
@@ -30,12 +29,10 @@ async function refresh(req, res) {
             secure: true
         })
 
-        console.log('5')
-
         return res.json({message : 'Succes'})
     } catch (e) {
         console.error(e)
-        return res.status(401).json('User not authorized')
+        return res.status(401).json('User not found')
     }
 }
 
