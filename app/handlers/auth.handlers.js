@@ -91,6 +91,7 @@ async function login(req, res) {
 
 async function logout(req, res) {
     try {
+        console.log(req.headers.cookie)
         if (!req.headers.cookie) return res.status(401).json({message: 'Error Token'})
 
         const [ empty, refreshToken ]  = req.headers.cookie.split('=')
