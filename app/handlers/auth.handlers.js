@@ -6,6 +6,8 @@ const bcrypt = require("bcryptjs")
 
 async function refresh(req, res) {
     try {
+        console.log(req.headers)
+
         if (!req.headers.cookie) return  res.status(401).json({message: 'Error Token'})
 
         const [ empty, tokenData ] = req.headers.cookie.split('=')
@@ -91,7 +93,6 @@ async function login(req, res) {
 
 async function logout(req, res) {
     try {
-        console.log(req.headers)
         if (!req.headers.cookie) return res.status(401).json({message: 'Error Token'})
 
         const [ empty, refreshToken ]  = req.headers.cookie.split('=')
