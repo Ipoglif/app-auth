@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken")
 
 async function generateTokens(data) {
 
-    const accessToken = jwt.sign(data, process.env.JWT_ACCESS_SECRET, {expiresIn: '30000'})
-    const refreshToken = jwt.sign(data, process.env.JWT_REFRESH_SECRET, {expiresIn: '1m'})
+    const accessToken = jwt.sign(data, process.env.JWT_ACCESS_SECRET, {expiresIn: '1m'})
+    const refreshToken = jwt.sign(data, process.env.JWT_REFRESH_SECRET, {expiresIn: '2m'})
 
     const { email } = data
 
