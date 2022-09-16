@@ -40,6 +40,8 @@ async function registration(req, res) {
     try {
         const { email, password } = req.body || req.params
 
+        if (!email || !password) return res.status(401).json('fields must be fill')
+
         const result = await authRepository.search({email})
 
         if (result !== undefined && !result.length) return res.status(400).json(`${email}: Name already in use`)
