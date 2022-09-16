@@ -1,4 +1,4 @@
-const { generateTokens } = require('./tokens.handlers')
+const { generateTokens, setResponse } = require('./tokens.handlers')
 const authRepository = require('../repositories/auth.repository')
 const userRepository = require('../repositories/users.repository')
 
@@ -12,24 +12,16 @@ async function refresh(req, res) {
 
         const authData = await authRepository.search({refreshToken: tokenData})
 
-        const tokens = await generateTokens({
+        const { accessToken, refreshToken } = await generateTokens({
             email: authData.email,
             psw: authData.psw
         })
 
         if (authData) {
-            await authRepository.update({refreshToken: tokens.refreshToken}, {refreshToken: tokenData})
+            await authRepository.update({refreshToken}, {refreshToken})
         }
 
-        res.set(tokens.accessToken)
-        res.cookie('refreshToken', tokens.refreshToken, {
-            maxAge: 60000,
-            httpOnly: true,
-            sameSite: 'none',
-            secure: true
-        })
-
-        return res.json({message : 'Succes'})
+        setResponse(res, accessToken, refreshToken)
     } catch (e) {
         console.error(e)
         return res.status(401).json('User not found')
@@ -79,15 +71,7 @@ async function login(req, res) {
             psw: result.psw
         })
 
-        res.set({accessToken})
-        res.cookie('refreshToken', refreshToken, {
-            maxAge: 60000,
-            httpOnly: true,
-            sameSite: 'none',
-            secure: true
-        })
-
-        return res.json({accessToken})
+        setResponse(res, accessToken, refreshToken)
     } catch (e) {
         console.error(e)
         return res.json({message: e})

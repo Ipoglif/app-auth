@@ -12,15 +12,13 @@ async function me(req, res) {
             })
     } catch (e) {
         console.error(e)
-        return res.json({
-            message: e
-        })
+        return res.json({message: e})
     }
 }
 
 async function showUsers(req, res) {
     try {
-        const result = usersRepository.select()
+        const result = await usersRepository.select()
         return res.json({
             allUsers : result
         })

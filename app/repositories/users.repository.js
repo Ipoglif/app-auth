@@ -17,8 +17,7 @@ async function insert(record) {
 }
 
 async function select() {
-    const [ result ] = await db(TABLE_NAME).select('*')
-    return result
+    return db(TABLE_NAME).select('*')
 }
 
 module.exports = {
