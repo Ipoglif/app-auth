@@ -1,7 +1,6 @@
 const { generateTokens } = require('./tokens.handlers')
 const authRepository = require('../repositories/auth.repository')
 const userRepository = require('../repositories/users.repository')
-
 const bcrypt = require("bcryptjs")
 
 async function refresh(req, res) {

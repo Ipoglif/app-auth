@@ -16,10 +16,6 @@ app.use(express.json())
 app.use(express.static(__dirname))
 app.use(cookieParser())
 app.use(cookieSession(options.cookie))
-app.use((req, res, next) => {
-    req.sessionOptions.maxAge = req.session.maxAge || req.sessionOptions.maxAge
-    next()
-})
 app.use(cors(options.cors))
 app.options('*', cors(options.cors))
 
