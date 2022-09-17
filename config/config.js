@@ -36,7 +36,7 @@ module.exports = {
             name: 'session',
             keys: ['key1'],
             maxAge: 60000,
-            secure: true,
+            // secure: true,
             httpOnly: true,
             sameSite: 'none',
             signed: false
