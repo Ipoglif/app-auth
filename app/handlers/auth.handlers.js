@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs")
 
 async function refresh(req, res) {
     try {
-        console.log(req.headers)
+        console.log(req)
         const { refreshToken } = req.session
         if (!refreshToken) return res.status(401).json({message: 'Error Token'})
 
@@ -21,7 +21,7 @@ async function refresh(req, res) {
             await authRepository.update({refreshToken: newTokens.refreshToken}, {refreshToken})
         }
 
-        req.session.refreshToken = newTokens.refreshToken
+        res.session.refreshToken = newTokens.refreshToken
         res.set({accessToken: newTokens.accessToken})
 
         return res.json({accessToken: newTokens.accessToken})
@@ -76,7 +76,7 @@ async function login(req, res) {
             psw: result.psw
         })
 
-        req.session.refreshToken = refreshToken
+        res.session.refreshToken = refreshToken
         res.set({accessToken: accessToken})
 
         return res.json({accessToken})
