@@ -8,7 +8,7 @@ async function refresh(req, res) {
     try {
         console.log(req)
         const { refreshToken } = req.session
-        if (!refreshToken) return res.status(401).json({message: 'Error Token'})
+        if (!refreshToken) return res.status(204).json({message: 'Empty cookie'})
 
         const authData = await authRepository.search({refreshToken})
 
@@ -21,7 +21,7 @@ async function refresh(req, res) {
             await authRepository.update({refreshToken: newTokens.refreshToken}, {refreshToken})
         }
 
-        res.session.refreshToken = newTokens.refreshToken
+        req.session.refreshToken = newTokens.refreshToken
         res.set({accessToken: newTokens.accessToken})
 
         return res.json({accessToken: newTokens.accessToken})
@@ -76,8 +76,13 @@ async function login(req, res) {
             psw: result.psw
         })
 
-        res.session.refreshToken = refreshToken
         req.session.refreshToken = refreshToken
+        res.cookie('refreshToken', refreshToken, {
+            maxAge: 60000,
+            secure: true,
+            httpOnly: true,
+            sameSite: 'none',
+        })
         res.set({accessToken: accessToken})
 
         return res.json({accessToken})

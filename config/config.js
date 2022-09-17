@@ -38,7 +38,7 @@ module.exports = {
             secure: true,
             httpOnly: true,
             sameSite: 'none',
-            // signed: false
+            signed: false
         },
         cors: {
             origin: true,
