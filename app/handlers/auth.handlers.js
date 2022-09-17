@@ -64,24 +64,17 @@ async function login(req, res) {
     try {
         const { email, password } = req.body || req.params
         if (!email || !email) return res.status(400).json({message: 'Fields Must Be: Email, Password'})
-        console.log(req.body)
 
         const result = await authRepository.search({email})
         if (!result) return res.status(400).json({message: `${email}: User not found. Please Registr`})
 
-        console.log('2')
-
         const validPassword = bcrypt.compareSync(password, result.psw)
         if (!validPassword) return res.status(400).json({message: 'Password Error'})
-
-        console.log('3')
 
         const { accessToken, refreshToken } = await generateTokens({
             email,
             psw: result.psw
         })
-
-        console.log('4')
 
         req.session.refreshToken = refreshToken
         res.set({accessToken: accessToken})
