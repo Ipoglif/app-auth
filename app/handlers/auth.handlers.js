@@ -77,6 +77,7 @@ async function login(req, res) {
         })
 
         res.session.refreshToken = refreshToken
+        req.session.refreshToken = refreshToken
         res.set({accessToken: accessToken})
 
         return res.json({accessToken})
