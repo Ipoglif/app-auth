@@ -12,7 +12,7 @@ async function me(req, res) {
             })
     } catch (e) {
         console.error(e)
-        return res.json({message: e})
+        return res.status(500).json({message: e})
     }
 }
 
@@ -25,9 +25,7 @@ async function showUsers(req, res) {
         })
     } catch (e) {
         console.error(e)
-        return res.json({
-            message: e
-        })
+        return res.status(500).json({message: e})
     }
 }
 

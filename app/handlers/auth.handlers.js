@@ -56,14 +56,15 @@ async function registration(req, res) {
         return res.json({message: `User ${email}, created`})
     } catch (e) {
         console.error(e)
-        return res.status(400).json({message: e})
+        return res.status(500).json({message: e})
     }
 }
 
 async function login(req, res) {
     try {
         const { email, password } = req.body || req.params
-        console.log('1')
+        if (!email || !email) return res.status(400).json({message: 'Fields Must Be: Email, Password'})
+        console.log(req.body)
 
         const result = await authRepository.search({email})
         if (!result) return res.status(400).json({message: `${email}: User not found. Please Registr`})
@@ -90,7 +91,7 @@ async function login(req, res) {
         return res.json({accessToken})
     } catch (e) {
         console.error(e)
-        return res.json({message: e})
+        return res.status(500).json({message: e})
     }
 }
 
@@ -106,6 +107,7 @@ async function logout(req, res) {
         return res.json({message: 'Logouted'})
     } catch (e) {
         console.error(e)
+        return res.status(500).json({message: e})
     }
 }
 
