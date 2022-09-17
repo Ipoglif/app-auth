@@ -32,7 +32,7 @@ module.exports = {
     },
     options: {
         cookie: {
-            domain: 'herokuapp.com',
+            // domain: 'herokuapp.com',
             name: 'session',
             keys: ['key1'],
             maxAge: 60000,
