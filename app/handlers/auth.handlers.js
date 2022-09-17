@@ -77,12 +77,6 @@ async function login(req, res) {
         })
 
         req.session.refreshToken = refreshToken
-        res.cookie('refreshToken', refreshToken, {
-            maxAge: 60000,
-            secure: true,
-            httpOnly: true,
-            sameSite: 'none',
-        })
         res.set({accessToken: accessToken})
 
         return res.json({accessToken})
