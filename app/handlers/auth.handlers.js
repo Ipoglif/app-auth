@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs")
 
 async function refresh(req, res) {
     try {
+        console.log(req.headers)
         const { refreshToken } = req.session
         if (!refreshToken) return res.status(401).json({message: 'Error Token'})
 
@@ -33,7 +34,6 @@ async function refresh(req, res) {
 async function registration(req, res) {
     try {
         const { email, password, user_name } = req.body || req.params
-
         if (!email || !password || !user_name) return res.status(401).json('fields must be fill')
 
         const authResult = await authRepository.search({email})
