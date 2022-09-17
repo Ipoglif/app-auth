@@ -1,5 +1,6 @@
 const usersRepository = require('../repositories/users.repository')
 const authRepository = require('../repositories/auth.repository')
+const {login} = require("./auth.handlers");
 
 async function me(req, res) {
     try {
@@ -19,6 +20,9 @@ async function me(req, res) {
 async function showUsers(req, res) {
     try {
         const result = await usersRepository.select()
+
+        console.log(req.user)
+
         return res.json({
             allUsers : result
         })

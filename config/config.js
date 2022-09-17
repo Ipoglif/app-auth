@@ -29,12 +29,6 @@ module.exports = {
             password: 'eJ7pC8aJ9e',
             database: 'a0717002_db-blog'
         },
-        ftp: {
-            host: '185.219.43.43',
-            port: 21,
-            user: 'testblog',
-            password: 'hX9nA5lI2c'
-        },
     },
     options: {
         cookie: {
@@ -43,7 +37,8 @@ module.exports = {
             maxAge: 60000,
             secure: true,
             httpOnly: true,
-            sameSite: 'none'
+            sameSite: 'none',
+            signed: false
         },
         cors: {
             origin: true,

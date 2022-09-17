@@ -1,4 +1,4 @@
-const { generateTokens, setResponse } = require('./tokens.handlers')
+const { generateTokens } = require('./tokens.handlers')
 const authRepository = require('../repositories/auth.repository')
 const userRepository = require('../repositories/users.repository')
 
@@ -6,22 +6,24 @@ const bcrypt = require("bcryptjs")
 
 async function refresh(req, res) {
     try {
-        if (!req.headers.cookie) return res.status(401).json({message: 'Error Token'})
+        const { refreshToken } = req.session
+        if (!refreshToken) return res.status(401).json({message: 'Error Token'})
 
-        const [ empty, tokenData ] = req.headers.cookie.split('=')
+        const authData = await authRepository.search({refreshToken})
 
-        const authData = await authRepository.search({refreshToken: tokenData})
-
-        const { accessToken, refreshToken } = await generateTokens({
+        const newTokens = await generateTokens({
             email: authData.email,
             psw: authData.psw
         })
 
         if (authData) {
-            await authRepository.update({refreshToken}, {refreshToken})
+            await authRepository.update({refreshToken: newTokens.refreshToken}, {refreshToken})
         }
 
-        setResponse(res, accessToken, refreshToken)
+        req.session.refreshToken = newTokens.refreshToken
+        res.set({accessToken: newTokens.accessToken})
+
+        return res.json({accessToken: newTokens.accessToken})
     } catch (e) {
         console.error(e)
         return res.status(401).json('User not found')
@@ -30,13 +32,15 @@ async function refresh(req, res) {
 
 async function registration(req, res) {
     try {
-        const { email, password } = req.body || req.params
+        const { email, password, user_name } = req.body || req.params
 
-        if (!email || !password) return res.status(401).json('fields must be fill')
+        if (!email || !password || !user_name) return res.status(401).json('fields must be fill')
 
-        const result = await authRepository.search({email})
+        const authResult = await authRepository.search({email})
+        if (authResult !== undefined && !authResult.length) return res.status(400).json(`${email}: Name already in use`)
 
-        if (result !== undefined && !result.length) return res.status(400).json(`${email}: Name already in use`)
+        const userResult = await userRepository.search({user_name})
+        if (userResult !== undefined && !userResult.length) return res.status(401).json(`${user_name}: already in use. Use other username`)
 
         await authRepository.insert({
             email: email,
@@ -44,8 +48,8 @@ async function registration(req, res) {
         }).then( (id) => {
                 userRepository.insert({
                     user_id: id,
-                    user_name: 'sec',
-                    user_icon: 'sec_personal_icon',
+                    user_name,
+                    user_icon: 'sec_personal_icon' || null,
                     role: 'user'})
         })
 
@@ -71,7 +75,10 @@ async function login(req, res) {
             psw: result.psw
         })
 
-        setResponse(res, accessToken, refreshToken)
+        req.session.refreshToken = refreshToken
+        res.set({accessToken: accessToken})
+
+        return res.json({accessToken})
     } catch (e) {
         console.error(e)
         return res.json({message: e})
@@ -80,19 +87,14 @@ async function login(req, res) {
 
 async function logout(req, res) {
     try {
-        if (!req.headers.cookie) return res.status(401).json({message: 'Error Token'})
+        const { refreshToken } = req.session
+        if (!refreshToken) return res.status(401).json({message: 'Error Token'})
 
-        const [ empty, refreshToken ]  = req.headers.cookie.split('=')
+        await authRepository
+            .update({refreshToken: null}, {refreshToken})
+            .then( () => {req.session = null})
 
-        await authRepository.update({refreshToken: null}, {refreshToken})
-
-        res.clearCookie('refreshToken', {
-            httpOnly: true,
-            sameSite: 'none',
-            secure: true
-        })
-
-        return res.json({message: 'Token refresh is clean'})
+        return res.json({message: 'Logouted'})
     } catch (e) {
         console.error(e)
     }
