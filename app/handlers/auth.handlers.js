@@ -7,7 +7,7 @@ async function refresh(req, res) {
     try {
         console.log(req)
         const { refreshToken } = req.session
-        if (!refreshToken) return res.status(204).json({message: 'Empty cookie'})
+        if (!refreshToken) return res.status(401).json({message: 'Empty cookie'})
 
         const authData = await authRepository.search({refreshToken})
 
