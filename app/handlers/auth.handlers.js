@@ -26,7 +26,7 @@ async function refresh(req, res) {
         return res.json({accessToken: newTokens.accessToken})
     } catch (e) {
         console.error(e)
-        return res.status(401).json('User not found')
+        return res.status(500).json({message: e})
     }
 }
 
@@ -78,8 +78,6 @@ async function login(req, res) {
 
         req.session.refreshToken = refreshToken
         res.set({accessToken: accessToken})
-
-        console.log('5')
 
         return res.json({accessToken})
     } catch (e) {
